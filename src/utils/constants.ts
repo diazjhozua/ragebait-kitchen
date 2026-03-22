@@ -28,18 +28,18 @@ export const JUDGE_STYLES: Array<{
   }
 ];
 
-// Rage score thresholds and labels
+// Hell's Kitchen themed rage score levels
 export const RAGE_SCORE_LEVELS = [
-  { min: 90, max: 100, label: 'ABSOLUTE DISASTER', color: 'bg-red-900 text-white', emoji: '💀' },
-  { min: 80, max: 89, label: 'KITCHEN NIGHTMARE', color: 'bg-red-800 text-white', emoji: '🔥' },
-  { min: 70, max: 79, label: 'BLOODY AWFUL', color: 'bg-red-700 text-white', emoji: '😡' },
-  { min: 60, max: 69, label: 'TERRIBLE', color: 'bg-red-600 text-white', emoji: '😤' },
-  { min: 50, max: 59, label: 'POOR', color: 'bg-orange-600 text-white', emoji: '😮‍💨' },
-  { min: 40, max: 49, label: 'NEEDS WORK', color: 'bg-orange-500 text-white', emoji: '🤔' },
-  { min: 30, max: 39, label: 'MEDIOCRE', color: 'bg-yellow-500 text-black', emoji: '😐' },
-  { min: 20, max: 29, label: 'NOT BAD', color: 'bg-yellow-400 text-black', emoji: '🙂' },
-  { min: 10, max: 19, label: 'DECENT', color: 'bg-green-400 text-black', emoji: '👍' },
-  { min: 0, max: 9, label: 'ACTUALLY GOOD', color: 'bg-green-600 text-white', emoji: '✨' }
+  { min: 90, max: 100, label: 'HELL\'S KITCHEN DISASTER', color: 'bg-hell-900 text-white hell-glow', emoji: '💀', intensity: 'APOCALYPTIC' },
+  { min: 80, max: 89, label: 'GORDON\'S NIGHTMARE', color: 'bg-hell-800 text-white flame-glow', emoji: '🔥', intensity: 'INFERNAL' },
+  { min: 70, max: 79, label: 'BLOODY CATASTROPHE', color: 'bg-hell-700 text-white', emoji: '😡', intensity: 'BLAZING' },
+  { min: 60, max: 69, label: 'KITCHEN CHAOS', color: 'bg-hell-600 text-white', emoji: '😤', intensity: 'HEATED' },
+  { min: 50, max: 59, label: 'CULINARY CRISIS', color: 'bg-flame-600 text-white', emoji: '😮‍💨', intensity: 'WARM' },
+  { min: 40, max: 49, label: 'NEEDS CHEF TRAINING', color: 'bg-flame-500 text-white', emoji: '🤔', intensity: 'WARM' },
+  { min: 30, max: 39, label: 'AMATEUR HOUR', color: 'bg-yellow-500 text-black', emoji: '😐', intensity: 'COOL' },
+  { min: 20, max: 29, label: 'PASSABLE EFFORT', color: 'bg-yellow-400 text-black', emoji: '🙂', intensity: 'COOL' },
+  { min: 10, max: 19, label: 'KITCHEN APPROVED', color: 'bg-green-400 text-black', emoji: '👍', intensity: 'COOL' },
+  { min: 0, max: 9, label: 'MICHELIN WORTHY', color: 'bg-green-600 text-white', emoji: '✨', intensity: 'COOL' }
 ];
 
 // Storage keys
@@ -89,17 +89,53 @@ export const ERROR_MESSAGES = {
 // UI constants
 export const UI_CONFIG = {
   LOADING_MESSAGES: [
-    'Gordon is reading your recipe...',
-    'Preparing the judgment...',
-    'Analyzing your cooking disaster...',
-    'Gordon is getting angrier...',
-    'Calculating rage levels...'
+    '🔥 Gordon is firing up the kitchen...',
+    '👨‍🍳 Chef Ramsay is reviewing your disaster...',
+    '😤 Preparing the Hell\'s Kitchen judgment...',
+    '💀 Analyzing your culinary catastrophe...',
+    '🎯 Gordon is getting FURIOUS...',
+    '⚡ Calculating rage levels...',
+    '🔥 The heat is rising in the kitchen...',
+    '💣 Gordon\'s anger is building...'
   ],
   EMPTY_STATES: {
-    NO_LEADERBOARD: 'No entries yet. Submit a recipe to get started!',
-    NO_RESULTS: 'No results found.',
-    NO_API_KEY: 'Enter your OpenAI API key to start judging recipes.'
-  }
+    NO_LEADERBOARD: '🍽️ No disasters recorded yet. Submit your recipe to face Gordon\'s wrath!',
+    NO_RESULTS: '🔍 No culinary catastrophes found.',
+    NO_API_KEY: '🔑 Enter your OpenAI API key to enter Hell\'s Kitchen.'
+  },
+  HELL_KITCHEN_PHRASES: [
+    'Welcome to Hell\'s Kitchen!',
+    'The heat is ON!',
+    'Gordon is watching...',
+    'Competition is FIERCE!',
+    'Show us your WORST!',
+    'Time to face the FIRE!'
+  ]
+} as const;
+
+// Hell's Kitchen theme configuration
+export const HELL_KITCHEN_CONFIG = {
+  COLORS: {
+    PRIMARY: '#dc2626',    // Hell red
+    BLACK: '#111111',      // Kitchen black
+    STEEL: '#6b7280',      // Steel gray
+    FLAME: '#f97316',      // Flame orange
+    SMOKE: '#4b5563'       // Smoke gray
+  },
+  ANIMATIONS: {
+    FLAME_DURATION: '2s',
+    STEEL_GLEAM_DURATION: '3s',
+    HELL_PULSE_DURATION: '2s',
+    SMOKE_DURATION: '4s'
+  },
+  INTENSITY_LEVELS: [
+    { min: 90, intensity: 'APOCALYPTIC', color: 'hell-900', effect: 'hell-glow' },
+    { min: 80, intensity: 'INFERNAL', color: 'hell-800', effect: 'flame-glow' },
+    { min: 70, intensity: 'BLAZING', color: 'hell-700', effect: 'hell-pulse' },
+    { min: 60, intensity: 'HEATED', color: 'flame-600', effect: 'flame-flicker' },
+    { min: 40, intensity: 'WARM', color: 'flame-500', effect: 'subtle-glow' },
+    { min: 0, intensity: 'COOL', color: 'kitchen-500', effect: 'none' }
+  ]
 } as const;
 
 // Helper function to get rage score level

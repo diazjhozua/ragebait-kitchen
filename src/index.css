@@ -2,10 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hell's Kitchen theme CSS variables */
+:root {
+  --hell-kitchen-red: #dc2626;
+  --hell-kitchen-black: #111111;
+  --kitchen-steel: #6b7280;
+  --flame-orange: #f97316;
+  --smoke-gray: #4b5563;
+  --steel-light: #9ca3af;
+  --flame-light: #fb923c;
+}
+
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900 font-sans antialiased;
+    @apply bg-hell-gradient text-white font-hell antialiased;
     font-feature-settings: "cv03", "cv04", "cv11";
+    min-height: 100vh;
+    background-attachment: fixed;
   }
 
   /* Custom scrollbar */
@@ -46,6 +59,81 @@
   .font-chef {
     font-family: 'Georgia', 'Times New Roman', serif;
     font-style: italic;
+  }
+
+  /* Hell's Kitchen themed backgrounds */
+  .hell-kitchen-bg {
+    background: linear-gradient(135deg, var(--hell-kitchen-black) 0%, #1f2937 50%, var(--hell-kitchen-red) 100%);
+    background-attachment: fixed;
+  }
+
+  .kitchen-steel-bg {
+    background: linear-gradient(90deg, var(--kitchen-steel) 0%, var(--steel-light) 50%, var(--kitchen-steel) 100%);
+    position: relative;
+  }
+
+  .kitchen-steel-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 2px,
+      transparent 20px
+    );
+    pointer-events: none;
+  }
+
+  /* Flame and fire effects */
+  .flame-glow {
+    box-shadow: 0 0 20px rgba(249, 115, 22, 0.6), 0 0 40px rgba(249, 115, 22, 0.4), 0 0 60px rgba(249, 115, 22, 0.2);
+  }
+
+  .hell-glow {
+    box-shadow: 0 0 30px rgba(220, 38, 38, 0.7), 0 0 60px rgba(220, 38, 38, 0.4);
+  }
+
+  /* Kitchen equipment textures */
+  .steel-texture {
+    background:
+      linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%),
+      var(--kitchen-steel);
+    background-size: 20px 100%, 100% 100%;
+  }
+
+  /* Competition/intensity effects */
+  .competition-border {
+    border: 2px solid var(--hell-kitchen-red);
+    box-shadow:
+      inset 0 0 20px rgba(220, 38, 38, 0.3),
+      0 0 20px rgba(220, 38, 38, 0.5);
+  }
+
+  /* Hell's Kitchen buttons */
+  .btn-hell {
+    @apply bg-hell-600 hover:bg-hell-700 text-white font-bold transition-all duration-300;
+    @apply shadow-hell hover:shadow-flame transform hover:scale-105 active:scale-95;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);
+    border: 1px solid #7f1d1d;
+  }
+
+  .btn-hell:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 50%, #7f1d1d 100%);
+    animation: flame-flicker 0.5s ease-in-out;
+  }
+
+  /* Kitchen form styling */
+  .kitchen-input {
+    @apply bg-kitchen-800 border-kitchen-600 text-white placeholder-kitchen-400;
+    @apply focus:border-hell-500 focus:ring-hell-500 transition-all duration-300;
+    background: linear-gradient(145deg, #1f2937 0%, #111827 100%);
+    border: 1px solid #4b5563;
+  }
+
+  .kitchen-input:focus {
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3), inset 0 0 10px rgba(220, 38, 38, 0.1);
   }
 
   /* Animated gradient background */
@@ -283,6 +371,87 @@
 @keyframes blink {
   0%, 50% { border-color: transparent; }
   51%, 100% { border-color: #ef4444; }
+}
+
+/* Hell's Kitchen themed animations */
+@keyframes flameFlicker {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    filter: brightness(1);
+  }
+  25% {
+    transform: scale(1.05) rotate(-1deg);
+    filter: brightness(1.2);
+  }
+  50% {
+    transform: scale(0.95) rotate(1deg);
+    filter: brightness(0.9);
+  }
+  75% {
+    transform: scale(1.02) rotate(-0.5deg);
+    filter: brightness(1.1);
+  }
+}
+
+@keyframes steelGleam {
+  0%, 100% {
+    background-position: -200% center;
+  }
+  50% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes hellPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(220, 38, 38, 0.8), 0 0 60px rgba(220, 38, 38, 0.4);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes kitchenSmoke {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.8);
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100px) scale(1.5);
+  }
+}
+
+@keyframes competitionIntro {
+  0% {
+    opacity: 0;
+    transform: translateY(50px) scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-10px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes scoreFlame {
+  0%, 100% {
+    text-shadow: 0 0 5px #f97316, 0 0 10px #ea580c;
+  }
+  50% {
+    text-shadow: 0 0 10px #f97316, 0 0 20px #ea580c, 0 0 30px #c2410c;
+  }
 }
 
 /* Print styles */
