@@ -1,27 +1,67 @@
 import { useState } from 'react';
 import { useHasValidApiKey } from '../hooks/useApiKey';
-import type { JudgeResponse } from '../types/game';
+import { useLeaderboard } from '../hooks/useLeaderboard';
+import type { JudgeResponse, Recipe, JudgeStyle } from '../types/game';
+import type { LeaderboardEntry } from '../types/leaderboard';
 import ApiKeyPrompt from '../components/game/ApiKeyPrompt';
 import RecipeForm from '../components/game/RecipeForm';
 import JudgeResponseComponent from '../components/game/JudgeResponse';
+import Leaderboard from '../components/leaderboard/Leaderboard';
 
 function PlayPage() {
   const hasValidApiKey = useHasValidApiKey();
-  const [judgeResponse, setJudgeResponse] = useState<JudgeResponse | null>(null);
-  const [showApiKeyPrompt, setShowApiKeyPrompt] = useState(false);
+  const { addEntry } = useLeaderboard();
 
-  const handleJudgeComplete = (response: JudgeResponse) => {
+  const [judgeResponse, setJudgeResponse] = useState<JudgeResponse | null>(null);
+  const [lastRecipe, setLastRecipe] = useState<Recipe | null>(null);
+  const [lastPlayerName, setLastPlayerName] = useState<string>('');
+  const [lastJudgeStyle, setLastJudgeStyle] = useState<JudgeStyle>('classic-rage');
+  const [isSaving, setIsSaving] = useState(false);
+  const [selectedEntry, setSelectedEntry] = useState<LeaderboardEntry | null>(null);
+  const [showFullLeaderboard, setShowFullLeaderboard] = useState(false);
+
+  const handleJudgeComplete = (response: JudgeResponse, recipe: Recipe, playerName: string, judgeStyle: JudgeStyle) => {
     setJudgeResponse(response);
+    setLastRecipe(recipe);
+    setLastPlayerName(playerName);
+    setLastJudgeStyle(judgeStyle);
   };
 
   const handleTryAgain = () => {
     setJudgeResponse(null);
+    setLastRecipe(null);
+    setLastPlayerName('');
+    setLastJudgeStyle('classic-rage');
   };
 
-  const handleSaveToLeaderboard = () => {
-    // TODO: Implement in Phase 4
-    console.log('Save to leaderboard:', judgeResponse);
-    alert('Leaderboard saving will be implemented in Phase 4!');
+  const handleSaveToLeaderboard = async () => {
+    if (!judgeResponse || !lastRecipe || !lastPlayerName) {
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const success = await addEntry(lastRecipe, judgeResponse, lastPlayerName, lastJudgeStyle);
+      if (success) {
+        // Clear the current response to show the updated leaderboard
+        handleTryAgain();
+      } else {
+        alert('Failed to save to leaderboard. Please try again.');
+      }
+    } catch (error) {
+      console.error('Failed to save to leaderboard:', error);
+      alert('Failed to save to leaderboard. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleEntryClick = (entry: LeaderboardEntry) => {
+    setSelectedEntry(entry);
+  };
+
+  const handleCloseEntryModal = () => {
+    setSelectedEntry(null);
   };
 
   return (
@@ -38,7 +78,7 @@ function PlayPage() {
       {/* API Key Check */}
       {!hasValidApiKey && (
         <div className="mb-8">
-          <ApiKeyPrompt onKeySet={() => setShowApiKeyPrompt(false)} />
+          <ApiKeyPrompt onKeySet={() => {}} />
         </div>
       )}
 
@@ -68,28 +108,23 @@ function PlayPage() {
               response={judgeResponse}
               onSaveToLeaderboard={handleSaveToLeaderboard}
               onTryAgain={handleTryAgain}
+              isSaving={isSaving}
               className="sticky top-8"
             />
           ) : (
-            <div className="bg-white rounded-lg shadow-lg sticky top-8">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  🏆 Leaderboard
-                </h2>
-              </div>
-              <div className="p-6">
-                <div className="text-center text-gray-500">
-                  <svg className="mx-auto h-12 w-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                  <p className="text-sm font-medium mb-2">No entries yet</p>
-                  <p className="text-xs">
-                    Submit a recipe to see your judgment and start the leaderboard!
-                  </p>
-                  <div className="mt-4 text-xs text-gray-400">
-                    Leaderboard functionality will be implemented in Phase 4
-                  </div>
-                </div>
+            <div className="sticky top-8">
+              <Leaderboard
+                pageSize={5}
+                showControls={false}
+                onEntryClick={handleEntryClick}
+              />
+              <div className="mt-4 text-center">
+                <button
+                  onClick={() => setShowFullLeaderboard(true)}
+                  className="text-rage-600 hover:text-rage-700 text-sm font-medium underline"
+                >
+                  View Full Leaderboard →
+                </button>
               </div>
             </div>
           )}
@@ -109,6 +144,75 @@ function PlayPage() {
               <li>• Don't forget to mention any "special" preparation methods</li>
               <li>• The more detailed your disaster, the better Gordon's reaction!</li>
             </ul>
+          </div>
+        </div>
+      )}
+
+      {/* Full Leaderboard Modal */}
+      {showFullLeaderboard && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center">
+            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+              <div className="absolute inset-0 bg-gray-500 opacity-75" onClick={() => setShowFullLeaderboard(false)}></div>
+            </div>
+
+            <div className="inline-block align-middle bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all w-full max-w-6xl max-h-[90vh] overflow-y-auto">
+              <div className="bg-white">
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                  <h3 className="text-2xl font-bold text-gray-900">
+                    🏆 Full Leaderboard
+                  </h3>
+                  <button
+                    onClick={() => setShowFullLeaderboard(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="p-6">
+                  <Leaderboard
+                    showControls={true}
+                    onEntryClick={handleEntryClick}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Entry Details Modal */}
+      {selectedEntry && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center">
+            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+              <div className="absolute inset-0 bg-gray-500 opacity-75" onClick={handleCloseEntryModal}></div>
+            </div>
+
+            <div className="inline-block align-middle bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+              <JudgeResponseComponent
+                response={{
+                  rage_score: selectedEntry.rage_score,
+                  tags: selectedEntry.tags,
+                  reasons: ['Detailed breakdown not available in archived entries'],
+                  reaction: selectedEntry.reaction
+                }}
+                onTryAgain={handleCloseEntryModal}
+                className="border-0 shadow-none"
+              />
+              <div className="px-6 pb-6 border-t border-gray-200">
+                <div className="flex items-center justify-between text-sm text-gray-500">
+                  <span>
+                    Recipe by <strong>{selectedEntry.playerName}</strong>
+                  </span>
+                  <span>
+                    {new Date(selectedEntry.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

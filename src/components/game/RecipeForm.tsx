@@ -8,7 +8,7 @@ import Button from '../common/Button';
 import LoadingSpinner from '../common/LoadingSpinner';
 
 interface RecipeFormProps {
-  onJudgeComplete?: (response: any) => void;
+  onJudgeComplete?: (response: JudgeResponse, recipe: Recipe, playerName: string, judgeStyle: JudgeStyle) => void;
   className?: string;
 }
 
@@ -35,6 +35,11 @@ export default function RecipeForm({ onJudgeComplete, className = '' }: RecipeFo
     recipeContent?: string;
     recipeTitle?: string;
   }>({});
+
+  // Track the last submitted data for callbacks
+  const [submittedRecipe, setSubmittedRecipe] = useState<Recipe | null>(null);
+  const [submittedPlayerName, setSubmittedPlayerName] = useState<string>('');
+  const [submittedJudgeStyle, setSubmittedJudgeStyle] = useState<JudgeStyle>('classic-rage');
 
   // Save player name to localStorage
   useEffect(() => {
@@ -68,10 +73,10 @@ export default function RecipeForm({ onJudgeComplete, className = '' }: RecipeFo
 
   // Notify parent when judgment is complete
   useEffect(() => {
-    if (response && onJudgeComplete) {
-      onJudgeComplete(response);
+    if (response && onJudgeComplete && submittedRecipe && submittedPlayerName) {
+      onJudgeComplete(response, submittedRecipe, submittedPlayerName, submittedJudgeStyle);
     }
-  }, [response, onJudgeComplete]);
+  }, [response, onJudgeComplete, submittedRecipe, submittedPlayerName, submittedJudgeStyle]);
 
   const validateForm = () => {
     const newErrors: typeof errors = {};
@@ -114,6 +119,11 @@ export default function RecipeForm({ onJudgeComplete, className = '' }: RecipeFo
       content: recipeContent.trim(),
       ...(useTitle && recipeTitle.trim() && { title: recipeTitle.trim() })
     };
+
+    // Store submitted data for callback
+    setSubmittedRecipe(recipe);
+    setSubmittedPlayerName(playerName.trim());
+    setSubmittedJudgeStyle(judgeStyle);
 
     await judgeRecipe(recipe, playerName.trim(), judgeStyle);
   };
