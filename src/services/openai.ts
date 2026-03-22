@@ -8,19 +8,35 @@ const RETRY_DELAY = 1000; // 1 second
 
 export class OpenAIService {
   private openai: OpenAI | null = null;
+  private customEndpoint: string | null = null;
 
-  constructor(apiKey?: string) {
+  constructor(apiKey?: string, customEndpoint?: string) {
     if (apiKey) {
-      this.setApiKey(apiKey);
+      this.setApiKey(apiKey, customEndpoint);
     }
   }
 
-  setApiKey(apiKey: string): void {
+  setApiKey(apiKey: string, customEndpoint?: string | null): void {
     try {
-      this.openai = new OpenAI({
+      const config: any = {
         apiKey,
         dangerouslyAllowBrowser: true // Required for client-side usage
-      });
+      };
+
+      // Set custom base URL if provided
+      if (customEndpoint) {
+        config.baseURL = customEndpoint.endsWith('/')
+          ? customEndpoint.slice(0, -1)
+          : customEndpoint;
+
+        // Ensure the endpoint has the correct path if it doesn't already
+        if (!config.baseURL.endsWith('/v1')) {
+          config.baseURL += '/v1';
+        }
+      }
+
+      this.openai = new OpenAI(config);
+      this.customEndpoint = customEndpoint || null;
     } catch (error) {
       console.error('Failed to initialize OpenAI client:', error);
       throw new Error('Failed to initialize OpenAI client');
@@ -183,11 +199,11 @@ export class OpenAIService {
 // Singleton instance for easy access
 let openAIService: OpenAIService | null = null;
 
-export function getOpenAIService(apiKey?: string): OpenAIService {
+export function getOpenAIService(apiKey?: string, customEndpoint?: string | null): OpenAIService {
   if (!openAIService) {
-    openAIService = new OpenAIService(apiKey);
+    openAIService = new OpenAIService(apiKey, customEndpoint);
   } else if (apiKey) {
-    openAIService.setApiKey(apiKey);
+    openAIService.setApiKey(apiKey, customEndpoint);
   }
   return openAIService;
 }

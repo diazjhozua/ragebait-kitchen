@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { JudgeResponse, Recipe, JudgeStyle, ApiError } from '../types/game';
 import { getOpenAIService } from '../services/openai';
-import { useApiKeyValue } from './useApiKey';
+import { useApiConfig } from './useApiKey';
 import { FALLBACK_RESPONSES } from '../utils/prompts';
 
 export interface JudgeState {
@@ -33,7 +33,7 @@ export function useOpenAI(): JudgeState & JudgeActions {
     lastRequest: null
   });
 
-  const apiKey = useApiKeyValue();
+  const { apiKey, customEndpoint } = useApiConfig();
 
   const judgeRecipe = useCallback(async (
     recipe: Recipe,
@@ -62,7 +62,7 @@ export function useOpenAI(): JudgeState & JudgeActions {
     }));
 
     try {
-      const openAIService = getOpenAIService(apiKey);
+      const openAIService = getOpenAIService(apiKey, customEndpoint);
 
       const response = await openAIService.judgeRecipe({
         recipe,

@@ -44,9 +44,31 @@ export const recipeSchema = z.object({
     .max(5000, 'Recipe is too long'),
 });
 
-// Zod schema for validating API key format (basic OpenAI key format)
+// Zod schema for validating API key format (flexible for different providers)
 export const apiKeySchema = z.string()
-  .regex(/^sk-[a-zA-Z0-9]{20,}$/, 'Invalid OpenAI API key format');
+  .min(1, 'API key is required')
+  .refine((key) => {
+    // OpenAI format
+    if (key.startsWith('sk-')) return /^sk-[a-zA-Z0-9]{20,}$/.test(key);
+    // Azure OpenAI format
+    if (/^[a-f0-9]{32}$/.test(key)) return true;
+    // Generic API key (allow other formats)
+    if (key.length >= 8) return true;
+    return false;
+  }, 'Invalid API key format');
+
+// Zod schema for validating custom API endpoint
+export const customEndpointSchema = z.string()
+  .url('Must be a valid URL')
+  .refine((url) => {
+    try {
+      const parsedUrl = new URL(url);
+      return parsedUrl.protocol === 'https:' || parsedUrl.hostname === 'localhost' || parsedUrl.hostname === '127.0.0.1';
+    } catch {
+      return false;
+    }
+  }, 'Must use HTTPS or be a localhost URL')
+  .optional();
 
 // Zod schema for validating player name
 export const playerNameSchema = z.string()
@@ -59,6 +81,7 @@ export type ValidatedJudgeResponse = z.infer<typeof judgeResponseSchema>;
 export type ValidatedLeaderboardEntry = z.infer<typeof leaderboardEntrySchema>;
 export type ValidatedRecipe = z.infer<typeof recipeSchema>;
 export type ValidatedApiKey = z.infer<typeof apiKeySchema>;
+export type ValidatedCustomEndpoint = z.infer<typeof customEndpointSchema>;
 export type ValidatedPlayerName = z.infer<typeof playerNameSchema>;
 
 // Helper function to safely validate with error handling

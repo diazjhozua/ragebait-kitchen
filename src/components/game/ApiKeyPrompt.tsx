@@ -8,23 +8,50 @@ interface ApiKeyPromptProps {
 }
 
 export default function ApiKeyPrompt({ onKeySet, className = '' }: ApiKeyPromptProps) {
-  const { apiKey, isValid, error, storageType, setApiKey, clearApiKey, resetError } = useApiKey();
+  const {
+    apiKey,
+    customEndpoint,
+    isValid,
+    error,
+    storageType,
+    setApiKey,
+    setCustomEndpoint,
+    clearAll,
+    resetError
+  } = useApiKey();
+
   const [inputValue, setInputValue] = useState(apiKey || '');
+  const [endpointValue, setEndpointValue] = useState(customEndpoint || '');
   const [selectedStorageType, setSelectedStorageType] = useState<'persistent' | 'session'>('persistent');
   const [showKey, setShowKey] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(!!customEndpoint);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     resetError();
 
-    if (setApiKey(inputValue, selectedStorageType)) {
+    // Set API key first
+    const keySuccess = setApiKey(inputValue, selectedStorageType);
+
+    // Set custom endpoint if provided
+    let endpointSuccess = true;
+    if (endpointValue.trim()) {
+      endpointSuccess = setCustomEndpoint(endpointValue, selectedStorageType);
+    } else {
+      // Clear endpoint if empty
+      setCustomEndpoint('');
+    }
+
+    if (keySuccess && endpointSuccess) {
       onKeySet?.();
     }
   };
 
   const handleClear = () => {
-    clearApiKey();
+    clearAll();
     setInputValue('');
+    setEndpointValue('');
+    setShowAdvanced(false);
     resetError();
   };
 
@@ -40,11 +67,16 @@ export default function ApiKeyPrompt({ onKeySet, className = '' }: ApiKeyPromptP
             </div>
             <div className="ml-3">
               <p className="text-sm font-medium text-green-800">
-                API Key Set ({storageType === 'persistent' ? 'Persistent' : 'Session Only'})
+                API Configuration Set ({storageType === 'persistent' ? 'Persistent' : 'Session Only'})
               </p>
+              {customEndpoint && (
+                <p className="text-xs text-green-700 mt-1">
+                  <strong>Custom Endpoint:</strong> {customEndpoint}
+                </p>
+              )}
               {showKey && (
                 <p className="text-xs text-green-700 font-mono break-all mt-1">
-                  {apiKey}
+                  <strong>API Key:</strong> {apiKey}
                 </p>
               )}
             </div>
@@ -79,12 +111,12 @@ export default function ApiKeyPrompt({ onKeySet, className = '' }: ApiKeyPromptP
         </div>
         <div className="ml-3 flex-1">
           <h3 className="text-lg font-medium text-yellow-800">
-            🔑 OpenAI API Key Required
+            🔑 API Configuration Required
           </h3>
           <div className="mt-2 text-sm text-yellow-700">
             <p>
               This game uses your own OpenAI API key to power the AI judge. Your key stays local in your browser
-              and is only used to communicate directly with OpenAI.
+              and is only used to communicate with your chosen API endpoint (OpenAI by default, or custom endpoints like Azure OpenAI, local models, etc.).
             </p>
           </div>
 
@@ -106,6 +138,51 @@ export default function ApiKeyPrompt({ onKeySet, className = '' }: ApiKeyPromptP
                   <p className="mt-1 text-sm text-red-600">{error}</p>
                 )}
               </div>
+
+              {/* Advanced options toggle */}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setShowAdvanced(!showAdvanced)}
+                  className="flex items-center text-sm font-medium text-yellow-700 hover:text-yellow-800 transition-colors"
+                >
+                  <svg className={`w-4 h-4 mr-2 transform transition-transform ${showAdvanced ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                  Advanced Options
+                </button>
+              </div>
+
+              {/* Custom endpoint field */}
+              {showAdvanced && (
+                <div className="bg-yellow-100 rounded-lg p-4 border border-yellow-300">
+                  <div>
+                    <label htmlFor="customEndpoint" className="block text-sm font-medium text-yellow-800 mb-2">
+                      Custom API Endpoint (Optional)
+                    </label>
+                    <input
+                      id="customEndpoint"
+                      type="url"
+                      value={endpointValue}
+                      onChange={(e) => setEndpointValue(e.target.value)}
+                      placeholder="https://api.openai.com"
+                      className="block w-full border-yellow-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
+                    />
+                    <div className="mt-2 text-xs text-yellow-700">
+                      <p className="mb-1"><strong>Use this for:</strong></p>
+                      <ul className="list-disc list-inside space-y-0.5 ml-2">
+                        <li>Azure OpenAI Service</li>
+                        <li>Local LLM servers (Ollama, etc.)</li>
+                        <li>OpenAI-compatible APIs</li>
+                        <li>Custom proxy endpoints</li>
+                      </ul>
+                      <p className="mt-2 text-xs">
+                        Leave empty to use the default OpenAI API. Must be HTTPS or localhost.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-yellow-800">
@@ -146,7 +223,7 @@ export default function ApiKeyPrompt({ onKeySet, className = '' }: ApiKeyPromptP
                 fullWidth
                 disabled={!inputValue.trim()}
               >
-                Set API Key
+                {showAdvanced && endpointValue.trim() ? 'Set API Configuration' : 'Set API Key'}
               </Button>
             </div>
           </form>
