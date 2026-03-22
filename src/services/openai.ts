@@ -2,13 +2,14 @@ import OpenAI from 'openai';
 import type { JudgeRequest, JudgeResponse, ApiError } from '../types/game';
 import { validateWithSchema, judgeResponseSchema } from '../utils/validation';
 import { buildJudgePrompt, RETRY_PROMPT, FALLBACK_RESPONSES } from '../utils/prompts';
+import { findMaxSimilarity, applySimilarityPenalty } from '../utils/textSimilarity';
+import { StorageService } from './storage';
 
 const MAX_RETRIES = 2;
 const RETRY_DELAY = 1000; // 1 second
 
 export class OpenAIService {
   private openai: OpenAI | null = null;
-  private customEndpoint: string | null = null;
 
   constructor(apiKey?: string, customEndpoint?: string) {
     if (apiKey) {
@@ -36,7 +37,6 @@ export class OpenAIService {
       }
 
       this.openai = new OpenAI(config);
-      this.customEndpoint = customEndpoint || null;
     } catch (error) {
       console.error('Failed to initialize OpenAI client:', error);
       throw new Error('Failed to initialize OpenAI client');
@@ -59,7 +59,8 @@ export class OpenAIService {
         const validationResult = this.validateResponse(response);
 
         if (validationResult.success) {
-          return validationResult.data;
+          // Apply similarity checking and penalties
+          return this.applySimilarityPenalty(validationResult.data, request.recipe);
         }
 
         // If validation failed and we have retries left, try again
@@ -194,6 +195,40 @@ export class OpenAIService {
   private delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+  private applySimilarityPenalty(response: JudgeResponse, recipe: { title?: string; content: string }): JudgeResponse {
+    try {
+      // Get previous recipes from leaderboard
+      const previousRecipes = StorageService.getLeaderboardEntries().map(entry => ({
+        title: entry.recipeTitle,
+        content: entry.recipeContent
+      }));
+
+      // Find maximum similarity against previous recipes
+      const similarityResult = findMaxSimilarity(recipe, previousRecipes);
+
+      // Apply penalty to rage score
+      const penaltyResult = applySimilarityPenalty(response.rage_score, similarityResult.maxSimilarity);
+
+      // Return enhanced response with similarity info
+      return {
+        ...response,
+        rage_score: penaltyResult.adjustedScore,
+        similarity: {
+          maxSimilarity: similarityResult.maxSimilarity,
+          originalScore: response.rage_score,
+          penalty: penaltyResult.penalty,
+          penaltyType: penaltyResult.penaltyType,
+          message: penaltyResult.message,
+          mostSimilarRecipe: similarityResult.mostSimilarRecipe
+        }
+      };
+    } catch (error) {
+      console.warn('Failed to apply similarity penalty:', error);
+      // Return original response if similarity checking fails
+      return response;
+    }
+  }
 }
 
 // Singleton instance for easy access
@@ -201,7 +236,7 @@ let openAIService: OpenAIService | null = null;
 
 export function getOpenAIService(apiKey?: string, customEndpoint?: string | null): OpenAIService {
   if (!openAIService) {
-    openAIService = new OpenAIService(apiKey, customEndpoint);
+    openAIService = new OpenAIService(apiKey, customEndpoint || undefined);
   } else if (apiKey) {
     openAIService.setApiKey(apiKey, customEndpoint);
   }

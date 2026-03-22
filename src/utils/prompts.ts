@@ -122,4 +122,4 @@ export const FALLBACK_RESPONSES = {
     reasons: ['AI judge returned invalid response', 'Response format error'],
     reaction: "For crying out loud! My AI brain is having a meltdown and can't form proper thoughts about your recipe! The judgment system is as broken as your cooking probably is!"
   }
-} as const;
+};

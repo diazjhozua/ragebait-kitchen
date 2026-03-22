@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { getRageScoreLevel } from '../utils/constants';
 
 function AboutPage() {
   const [activeTab, setActiveTab] = useState<'overview' | 'features' | 'faq' | 'privacy'>('overview');

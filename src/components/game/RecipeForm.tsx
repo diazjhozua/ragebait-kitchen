@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Recipe, JudgeStyle } from '../../types/game';
+import type { Recipe, JudgeStyle, JudgeResponse } from '../../types/game';
 import { useApiKey } from '../../hooks/useApiKey';
 import { useOpenAI } from '../../hooks/useOpenAI';
 import { validateWithSchema, recipeSchema, playerNameSchema } from '../../utils/validation';

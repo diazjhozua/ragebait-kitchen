@@ -15,6 +15,17 @@ export const judgeResponseSchema = z.object({
   reaction: z.string()
     .min(10, 'Reaction must be at least 10 characters')
     .max(2000, 'Reaction is too long'),
+  similarity: z.object({
+    maxSimilarity: z.number().min(0).max(1),
+    originalScore: z.number().min(0).max(100),
+    penalty: z.number().min(0),
+    penaltyType: z.enum(['none', 'minor', 'moderate', 'severe']),
+    message: z.string(),
+    mostSimilarRecipe: z.object({
+      title: z.string().optional(),
+      content: z.string()
+    }).optional()
+  }).optional()
 });
 
 // Zod schema for validating leaderboard entries

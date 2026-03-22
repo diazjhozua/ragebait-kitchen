@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { JudgeResponse } from '../../types/game';
 import RageScore from './RageScore';
 import Button from '../common/Button';
+import SimilarityWarning from './SimilarityWarning';
 
 interface JudgeResponseProps {
   response: JudgeResponse;
@@ -91,6 +92,11 @@ export default function JudgeResponseComponent({
             )}
           </div>
         </div>
+
+        {/* Similarity Warning */}
+        {response.similarity && response.similarity.penaltyType !== 'none' && (
+          <SimilarityWarning similarity={response.similarity} className="mb-6" />
+        )}
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3">

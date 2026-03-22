@@ -171,11 +171,15 @@ export function useApiKey(): ApiConfig & ApiKeyActions {
       return false;
     }
 
-    const cleanEndpoint = validation.data;
+    const cleanEndpoint = validation.data || null;
 
     try {
       if (storageType === 'persistent') {
-        localStorage.setItem(API_ENDPOINT_STORAGE_KEY, cleanEndpoint);
+        if (cleanEndpoint) {
+          localStorage.setItem(API_ENDPOINT_STORAGE_KEY, cleanEndpoint);
+        } else {
+          localStorage.removeItem(API_ENDPOINT_STORAGE_KEY);
+        }
         sessionCustomEndpoint = null;
       } else {
         sessionCustomEndpoint = cleanEndpoint;
