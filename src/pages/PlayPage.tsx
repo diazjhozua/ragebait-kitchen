@@ -19,6 +19,7 @@ function PlayPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<LeaderboardEntry | null>(null);
   const [showFullLeaderboard, setShowFullLeaderboard] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
 
   const handleJudgeComplete = (response: JudgeResponse, recipe: Recipe, playerName: string, judgeStyle: JudgeStyle) => {
     setJudgeResponse(response);
@@ -32,6 +33,8 @@ function PlayPage() {
     setLastRecipe(null);
     setLastPlayerName('');
     setLastJudgeStyle('classic-rage');
+    setIsSaving(false);
+    setResetKey(prev => prev + 1);
   };
 
   const handleSaveToLeaderboard = async () => {
@@ -39,20 +42,29 @@ function PlayPage() {
       return;
     }
 
-    setIsSaving(true);
+    // Store the data before clearing the state
+    const recipeToSave = lastRecipe;
+    const responseToSave = judgeResponse;
+    const playerNameToSave = lastPlayerName;
+    const judgeStyleToSave = lastJudgeStyle;
+
+    // Clear the UI immediately to show leaderboard
+    setJudgeResponse(null);
+    setLastRecipe(null);
+    setLastPlayerName('');
+    setLastJudgeStyle('classic-rage');
+    setIsSaving(false);
+    setResetKey(prev => prev + 1);
+
+    // Save in background
     try {
-      const success = await addEntry(lastRecipe, judgeResponse, lastPlayerName, lastJudgeStyle);
-      if (success) {
-        // Clear the current response to show the updated leaderboard
-        handleTryAgain();
-      } else {
+      const success = await addEntry(recipeToSave, responseToSave, playerNameToSave, judgeStyleToSave);
+      if (!success) {
         alert('Failed to save to leaderboard. Please try again.');
       }
     } catch (error) {
       console.error('Failed to save to leaderboard:', error);
       alert('Failed to save to leaderboard. Please try again.');
-    } finally {
-      setIsSaving(false);
     }
   };
 
@@ -63,6 +75,7 @@ function PlayPage() {
   const handleCloseEntryModal = () => {
     setSelectedEntry(null);
   };
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -86,7 +99,7 @@ function PlayPage() {
         {/* Recipe Form Panel */}
         <div className="xl:col-span-2">
           {hasValidApiKey ? (
-            <RecipeForm onJudgeComplete={handleJudgeComplete} />
+            <RecipeForm onJudgeComplete={handleJudgeComplete} resetKey={resetKey} />
           ) : (
             <div className="bg-gray-100 rounded-lg shadow p-12 text-center">
               <div className="text-gray-500">
@@ -114,18 +127,9 @@ function PlayPage() {
           ) : (
             <div className="sticky top-8">
               <Leaderboard
-                pageSize={5}
-                showControls={false}
+                showControls={true}
                 onEntryClick={handleEntryClick}
               />
-              <div className="mt-4 text-center">
-                <button
-                  onClick={() => setShowFullLeaderboard(true)}
-                  className="text-rage-600 hover:text-rage-700 text-sm font-medium underline"
-                >
-                  View Full Leaderboard →
-                </button>
-              </div>
             </div>
           )}
         </div>

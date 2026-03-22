@@ -9,12 +9,13 @@ import LoadingSpinner from '../common/LoadingSpinner';
 
 interface RecipeFormProps {
   onJudgeComplete?: (response: JudgeResponse, recipe: Recipe, playerName: string, judgeStyle: JudgeStyle) => void;
+  resetKey?: string | number; // When this changes, reset the form
   className?: string;
 }
 
-export default function RecipeForm({ onJudgeComplete, className = '' }: RecipeFormProps) {
+export default function RecipeForm({ onJudgeComplete, resetKey, className = '' }: RecipeFormProps) {
   const { isValid: hasValidApiKey } = useApiKey();
-  const { judgeRecipe, isLoading, response, error } = useOpenAI();
+  const { judgeRecipe, isLoading, response, error, reset } = useOpenAI();
 
   // Form state
   const [playerName, setPlayerName] = useState(() => {
@@ -70,6 +71,13 @@ export default function RecipeForm({ onJudgeComplete, className = '' }: RecipeFo
       setErrors(prev => ({ ...prev, recipeTitle: undefined }));
     }
   }, [recipeTitle, errors.recipeTitle]);
+
+  // Reset OpenAI hook when resetKey changes
+  useEffect(() => {
+    if (resetKey !== undefined) {
+      reset();
+    }
+  }, [resetKey, reset]);
 
   // Notify parent when judgment is complete
   useEffect(() => {
