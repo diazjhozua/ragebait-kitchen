@@ -58,7 +58,7 @@ export default function RageScore({
             stroke="currentColor"
             strokeWidth={sizeConfig.stroke}
             fill="transparent"
-            className="text-gray-200"
+            className="text-kitchen-600 opacity-30"
           />
           {/* Progress circle */}
           <circle
@@ -72,22 +72,28 @@ export default function RageScore({
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
             className={`transition-all duration-1000 ease-out ${
-              score >= 80 ? 'text-red-600' :
-              score >= 60 ? 'text-orange-500' :
-              score >= 40 ? 'text-yellow-500' :
-              score >= 20 ? 'text-blue-500' :
+              score >= 80 ? 'text-hell-600 drop-shadow-hell-glow' :
+              score >= 60 ? 'text-flame-600 drop-shadow-flame-glow' :
+              score >= 40 ? 'text-flame-500' :
+              score >= 20 ? 'text-kitchen-400' :
               'text-green-500'
-            } ${animated ? 'animate-pulse' : ''}`}
+            } ${animated ? 'animate-flame-flicker' : ''}`}
           />
         </svg>
 
         {/* Score text in the center */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
-            <div className={`font-bold ${sizeConfig.text} text-gray-900`}>
+            <div className={`font-extrabold ${sizeConfig.text} ${
+              score >= 90 ? 'text-hell-100 animate-hell-pulse hell-glow' :
+              score >= 80 ? 'text-hell-200' :
+              score >= 60 ? 'text-flame-200' :
+              score >= 40 ? 'text-flame-300' :
+              'text-kitchen-200'
+            } drop-shadow-lg`}>
               {score}
             </div>
-            <div className={`${sizeConfig.label} text-gray-600 font-medium`}>
+            <div className={`${sizeConfig.label} text-steel-300 font-bold font-chef tracking-wider`}>
               RAGE
             </div>
           </div>
@@ -134,21 +140,21 @@ export function RageScoreBar({ score, className = '' }: { score: number; classNa
   return (
     <div className={`w-full ${className}`}>
       <div className="flex justify-between items-center mb-1">
-        <span className="text-sm font-medium text-gray-700">
+        <span className="text-sm font-bold text-steel-200">
           Rage Score: {score}/100
         </span>
         <span className={`text-xs px-2 py-1 rounded ${level.color}`}>
           {level.emoji} {level.label}
         </span>
       </div>
-      <div className="w-full bg-gray-200 rounded-full h-3">
+      <div className="w-full bg-kitchen-800 rounded-full h-3 border border-steel-600">
         <div
           className={`h-3 rounded-full transition-all duration-1000 ease-out ${
-            score >= 80 ? 'bg-red-600' :
-            score >= 60 ? 'bg-orange-500' :
-            score >= 40 ? 'bg-yellow-500' :
-            score >= 20 ? 'bg-blue-500' :
-            'bg-green-500'
+            score >= 80 ? 'bg-gradient-to-r from-hell-600 to-hell-800 hell-glow' :
+            score >= 60 ? 'bg-gradient-to-r from-flame-500 to-flame-700' :
+            score >= 40 ? 'bg-gradient-to-r from-flame-400 to-flame-600' :
+            score >= 20 ? 'bg-gradient-to-r from-kitchen-400 to-kitchen-600' :
+            'bg-gradient-to-r from-green-500 to-green-700'
           }`}
           style={{ width: `${score}%` }}
         />

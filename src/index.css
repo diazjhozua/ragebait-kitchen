@@ -15,7 +15,9 @@
 
 @layer base {
   body {
-    @apply bg-hell-gradient text-white font-hell antialiased;
+    @apply text-white antialiased;
+    background: linear-gradient(135deg, #111111 0%, #1f2937 50%, #dc2626 100%);
+    font-family: 'Inter', system-ui, sans-serif;
     font-feature-settings: "cv03", "cv04", "cv11";
     min-height: 100vh;
     background-attachment: fixed;

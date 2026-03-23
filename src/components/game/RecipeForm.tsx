@@ -144,7 +144,7 @@ export default function RecipeForm({ onJudgeComplete, resetKey, className = '' }
 
   if (isLoading) {
     return (
-      <div className={`bg-white rounded-lg shadow p-6 ${className}`}>
+      <div className={`hell-kitchen-bg border-2 border-hell-600 rounded-lg shadow-xl p-6 hell-glow ${className}`}>
         <LoadingSpinner
           size="lg"
           showRandomMessages={true}
@@ -155,96 +155,112 @@ export default function RecipeForm({ onJudgeComplete, resetKey, className = '' }
   }
 
   return (
-    <div className={`bg-white rounded-lg shadow-lg ${className}`}>
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-900">Submit Your Recipe</h2>
-        <p className="text-gray-600 mt-1">
-          Dare to submit your culinary creation for Gordon's judgment...
-        </p>
+    <div className={`hell-kitchen-bg border-2 border-hell-600 rounded-lg shadow-xl hell-glow ${className}`}>
+      <div className="px-6 py-4 border-b border-flame-600 bg-gradient-to-r from-hell-800 to-hell-700">
+        <div className="flex items-center space-x-3">
+          <div className="text-3xl animate-flame-flicker">🔥</div>
+          <div>
+            <h2 className="text-2xl font-bold text-hell-100 font-chef">Submit Your Recipe</h2>
+            <p className="text-flame-300 mt-1 font-semibold">
+              Dare to submit your culinary creation for Gordon's judgment...
+            </p>
+          </div>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="p-6 space-y-6">
         {/* Player Name */}
         <div>
-          <label htmlFor="playerName" className="block text-sm font-medium text-gray-700 mb-2">
-            Your Name
+          <label htmlFor="playerName" className="block text-sm font-bold text-hell-300 mb-2 flex items-center space-x-2">
+            <span>👨‍🍳</span>
+            <span>Chef Name</span>
           </label>
           <input
             id="playerName"
             type="text"
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
-            placeholder="Enter your name"
-            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-rage-500 focus:border-rage-500 ${
-              errors.playerName ? 'border-red-500' : 'border-gray-300'
-            }`}
+            placeholder="Enter your chef name"
+            className={`w-full px-4 py-3 bg-kitchen-800 border-2 rounded-lg shadow-lg text-hell-100 placeholder-steel-400
+              focus:ring-2 focus:ring-hell-500 focus:border-hell-500 transition-all duration-200 font-semibold
+              ${errors.playerName ? 'border-hell-500 ring-2 ring-hell-400' : 'border-steel-600 hover:border-flame-500'}`}
             maxLength={LIMITS.PLAYER_NAME_MAX}
           />
           {errors.playerName && (
-            <p className="mt-1 text-sm text-red-600">{errors.playerName}</p>
+            <p className="mt-2 text-sm text-hell-400 flex items-center space-x-1">
+              <span>⚠️</span>
+              <span>{errors.playerName}</span>
+            </p>
           )}
         </div>
 
         {/* Judge Style */}
         <div>
-          <label htmlFor="judgeStyle" className="block text-sm font-medium text-gray-700 mb-2">
-            Judge Style
+          <label htmlFor="judgeStyle" className="block text-sm font-bold text-hell-300 mb-2 flex items-center space-x-2">
+            <span>⚔️</span>
+            <span>Gordon's Mood</span>
           </label>
           <select
             id="judgeStyle"
             value={judgeStyle}
             onChange={(e) => setJudgeStyle(e.target.value as JudgeStyle)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-rage-500 focus:border-rage-500"
+            className="w-full px-4 py-3 bg-kitchen-800 border-2 border-steel-600 rounded-lg shadow-lg text-hell-100 font-semibold
+              focus:ring-2 focus:ring-hell-500 focus:border-hell-500 hover:border-flame-500 transition-all duration-200"
           >
             {JUDGE_STYLES.map((style) => (
-              <option key={style.value} value={style.value}>
+              <option key={style.value} value={style.value} className="bg-kitchen-800 text-hell-100">
                 {style.label}
               </option>
             ))}
           </select>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-flame-400 italic">
             {JUDGE_STYLES.find(s => s.value === judgeStyle)?.description}
           </p>
         </div>
 
         {/* Recipe Title Toggle */}
-        <div className="flex items-center">
+        <div className="flex items-center space-x-3 bg-kitchen-700 p-3 rounded-lg border border-steel-600">
           <input
             id="useTitle"
             type="checkbox"
             checked={useTitle}
             onChange={(e) => setUseTitle(e.target.checked)}
-            className="h-4 w-4 text-rage-600 focus:ring-rage-500 border-gray-300 rounded"
+            className="h-5 w-5 text-hell-600 focus:ring-hell-500 border-steel-400 rounded bg-kitchen-800"
           />
-          <label htmlFor="useTitle" className="ml-2 text-sm font-medium text-gray-700">
-            Add recipe title (optional)
+          <label htmlFor="useTitle" className="text-sm font-bold text-hell-300 flex items-center space-x-2">
+            <span>📝</span>
+            <span>Add recipe title (optional but impressive!)</span>
           </label>
         </div>
 
         {/* Recipe Title */}
         {useTitle && (
-          <div>
-            <label htmlFor="recipeTitle" className="block text-sm font-medium text-gray-700 mb-2">
-              Recipe Title
+          <div className="animate-slide-in-down">
+            <label htmlFor="recipeTitle" className="block text-sm font-bold text-hell-300 mb-2 flex items-center space-x-2">
+              <span>🎯</span>
+              <span>Recipe Title</span>
             </label>
             <input
               id="recipeTitle"
               type="text"
               value={recipeTitle}
               onChange={(e) => setRecipeTitle(e.target.value)}
-              placeholder="My Amazing Recipe"
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-rage-500 focus:border-rage-500 ${
-                errors.recipeTitle ? 'border-red-500' : 'border-gray-300'
-              }`}
+              placeholder="My Culinary Masterpiece"
+              className={`w-full px-4 py-3 bg-kitchen-800 border-2 rounded-lg shadow-lg text-hell-100 placeholder-steel-400
+                focus:ring-2 focus:ring-hell-500 focus:border-hell-500 transition-all duration-200 font-semibold
+                ${errors.recipeTitle ? 'border-hell-500 ring-2 ring-hell-400' : 'border-steel-600 hover:border-flame-500'}`}
               maxLength={LIMITS.RECIPE_TITLE_MAX}
             />
-            <div className="mt-1 flex justify-between">
+            <div className="mt-2 flex justify-between">
               {errors.recipeTitle ? (
-                <p className="text-sm text-red-600">{errors.recipeTitle}</p>
+                <p className="text-sm text-hell-400 flex items-center space-x-1">
+                  <span>⚠️</span>
+                  <span>{errors.recipeTitle}</span>
+                </p>
               ) : (
                 <div />
               )}
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-steel-400">
                 {recipeTitle.length}/{LIMITS.RECIPE_TITLE_MAX}
               </p>
             </div>
@@ -253,29 +269,33 @@ export default function RecipeForm({ onJudgeComplete, resetKey, className = '' }
 
         {/* Recipe Content */}
         <div>
-          <label htmlFor="recipeContent" className="block text-sm font-medium text-gray-700 mb-2">
-            Recipe Instructions
+          <label htmlFor="recipeContent" className="block text-sm font-bold text-hell-300 mb-2 flex items-center space-x-2">
+            <span>📖</span>
+            <span>Recipe Instructions</span>
           </label>
           <textarea
             id="recipeContent"
             value={recipeContent}
             onChange={(e) => setRecipeContent(e.target.value)}
-            placeholder="Describe your recipe in detail. What ingredients did you use? How did you prepare it? The more outrageous, the better the judgment!"
+            placeholder="Describe your culinary disaster in vivid detail... What ingredients did you abuse? How did you prepare this monstrosity? The more outrageous, the better Gordon's reaction!"
             rows={8}
-            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-rage-500 focus:border-rage-500 resize-none ${
-              errors.recipeContent ? 'border-red-500' : 'border-gray-300'
-            }`}
+            className={`w-full px-4 py-3 bg-kitchen-800 border-2 rounded-lg shadow-lg text-hell-100 placeholder-steel-400 resize-none
+              focus:ring-2 focus:ring-hell-500 focus:border-hell-500 transition-all duration-200 font-medium
+              ${errors.recipeContent ? 'border-hell-500 ring-2 ring-hell-400' : 'border-steel-600 hover:border-flame-500'}`}
             maxLength={LIMITS.RECIPE_CONTENT_MAX}
           />
-          <div className="mt-1 flex justify-between">
+          <div className="mt-2 flex justify-between">
             {errors.recipeContent ? (
-              <p className="text-sm text-red-600">{errors.recipeContent}</p>
+              <p className="text-sm text-hell-400 flex items-center space-x-1">
+                <span>⚠️</span>
+                <span>{errors.recipeContent}</span>
+              </p>
             ) : (
-              <p className="text-sm text-gray-500">
-                Be as detailed and outrageous as possible for the best judgment!
+              <p className="text-sm text-flame-400 font-semibold">
+                💀 The more chaotic and detailed, the better Gordon's fury!
               </p>
             )}
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-steel-400">
               {recipeContent.length}/{LIMITS.RECIPE_CONTENT_MAX}
             </p>
           </div>
@@ -283,36 +303,38 @@ export default function RecipeForm({ onJudgeComplete, resetKey, className = '' }
 
         {/* Error Display */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-md p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
+          <div className="bg-gradient-to-r from-hell-900 to-hell-800 border-2 border-hell-600 rounded-lg p-4 hell-glow">
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0 text-2xl animate-bounce">
+                💥
               </div>
-              <div className="ml-3">
-                <p className="text-sm text-red-800">{error}</p>
+              <div>
+                <p className="text-sm font-bold text-hell-200">Kitchen Disaster Alert!</p>
+                <p className="text-sm text-hell-300">{error}</p>
               </div>
             </div>
           </div>
         )}
 
         {/* Submit Button */}
-        <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
+        <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-flame-600">
           <Button
             type="submit"
             disabled={!hasValidApiKey || isLoading}
-            className="flex-1"
+            variant="hell"
+            withFlame={true}
+            className="flex-1 text-lg font-bold"
           >
-            🔥 Judge My Recipe
+            🔥 FACE GORDON'S WRATH 🔥
           </Button>
           <Button
             type="button"
-            variant="outline"
+            variant="secondary"
             onClick={handleReset}
             disabled={isLoading}
+            className="sm:w-auto"
           >
-            Reset Form
+            🗑️ Clear Kitchen
           </Button>
         </div>
       </form>

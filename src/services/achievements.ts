@@ -1,4 +1,4 @@
-import type { Achievement, AchievementNotification, PlayerGamification, XPCalculationContext } from '../types/gamification';
+import type { Achievement, PlayerGamification, XPCalculationContext } from '../types/gamification';
 import type { JudgeResponse, Recipe, JudgeStyle } from '../types/game';
 import type { LeaderboardEntry } from '../types/leaderboard';
 
@@ -231,15 +231,13 @@ export const ACHIEVEMENTS: Achievement[] = [
 
 // Achievement Detection Service
 export class AchievementService {
-  private static playerStats: Map<string, any> = new Map();
-
   /**
    * Check for new achievements after a recipe submission
    */
   static async checkAchievements(
     recipe: Recipe,
     response: JudgeResponse,
-    playerName: string,
+    _playerName: string,
     judgeStyle: JudgeStyle,
     playerGamification: PlayerGamification,
     leaderboardEntries: LeaderboardEntry[]
@@ -338,7 +336,7 @@ export class AchievementService {
   /**
    * Check similarity penalty achievements
    */
-  private static checkSimilarityPenalties(requiredCount: number, entries: LeaderboardEntry[]): boolean {
+  private static checkSimilarityPenalties(_requiredCount: number, _entries: LeaderboardEntry[]): boolean {
     // This would need to be tracked separately as similarity info isn't stored in leaderboard entries
     // For now, return false - would need to enhance storage to track similarity penalties
     return false;
@@ -350,7 +348,7 @@ export class AchievementService {
   private static evaluateCustomCriteria(
     customCheck: string,
     context: XPCalculationContext,
-    playerGamification: PlayerGamification,
+    _playerGamification: PlayerGamification,
     entries: LeaderboardEntry[]
   ): boolean {
     switch (customCheck) {
@@ -361,7 +359,7 @@ export class AchievementService {
         return this.detectFusionCombination(context);
 
       case 'ingredient_count':
-        return this.countIngredients(context) >= (context as any).value || 20;
+        return this.countIngredients(context) >= 20;
 
       case 'sweet_savory_combo':
         return this.detectSweetSavoryCombo(context);
@@ -394,7 +392,7 @@ export class AchievementService {
     response: JudgeResponse,
     judgeStyle: JudgeStyle,
     playerGamification: PlayerGamification,
-    entries: LeaderboardEntry[]
+    _entries: LeaderboardEntry[]
   ): XPCalculationContext {
     return {
       rageScore: response.rage_score,

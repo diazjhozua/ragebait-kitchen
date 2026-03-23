@@ -1,11 +1,12 @@
 import { ButtonHTMLAttributes, forwardRef } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger' | 'outline';
+  variant?: 'primary' | 'secondary' | 'danger' | 'outline' | 'chef' | 'hell';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
   loadingText?: string;
   fullWidth?: boolean;
+  withFlame?: boolean;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
@@ -17,15 +18,18 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
   fullWidth = false,
   disabled,
   className = '',
+  withFlame = false,
   ...props
 }, ref) => {
-  const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseClasses = 'inline-flex items-center justify-center font-bold rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg';
 
   const variants = {
-    primary: 'bg-rage-600 hover:bg-rage-700 text-white focus:ring-rage-500',
-    secondary: 'bg-gray-600 hover:bg-gray-700 text-white focus:ring-gray-500',
-    danger: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500',
-    outline: 'border-2 border-rage-600 text-rage-600 hover:bg-rage-600 hover:text-white focus:ring-rage-500'
+    primary: 'bg-hell-600 hover:bg-hell-700 text-white focus:ring-hell-500 border border-hell-500 hover:shadow-hell-glow',
+    secondary: 'bg-kitchen-600 hover:bg-kitchen-700 text-white focus:ring-kitchen-500 border border-steel-400 hover:shadow-steel-gleam',
+    danger: 'bg-hell-800 hover:bg-hell-900 text-white focus:ring-hell-400 border border-hell-600 hover:shadow-hell-glow',
+    outline: 'border-2 border-hell-600 text-hell-600 hover:bg-hell-600 hover:text-white focus:ring-hell-500 hover:shadow-hell-glow bg-transparent',
+    chef: 'bg-flame-600 hover:bg-flame-700 text-white focus:ring-flame-500 border border-flame-500 hover:shadow-flame-glow font-chef',
+    hell: 'bg-gradient-to-r from-hell-800 to-hell-600 hover:from-hell-900 hover:to-hell-700 text-white focus:ring-hell-400 border border-hell-500 hover:shadow-hell-glow animate-hell-pulse'
   };
 
   const sizes = {
@@ -35,8 +39,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
   };
 
   const widthClass = fullWidth ? 'w-full' : '';
+  const flameClass = withFlame ? 'relative overflow-hidden' : '';
 
-  const classes = `${baseClasses} ${variants[variant]} ${sizes[size]} ${widthClass} ${className}`;
+  const classes = `${baseClasses} ${variants[variant]} ${sizes[size]} ${widthClass} ${flameClass} ${className}`;
 
   return (
     <button
@@ -45,23 +50,16 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
       disabled={disabled || isLoading}
       {...props}
     >
+      {withFlame && (
+        <div className="absolute inset-0 opacity-30 animate-flame-flicker">
+          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-flame-500 rounded-full"></div>
+          <div className="absolute bottom-1 left-1/3 transform -translate-x-1/2 w-1 h-1 bg-flame-400 rounded-full animate-bounce"></div>
+          <div className="absolute bottom-1 right-1/3 transform translate-x-1/2 w-1 h-1 bg-flame-400 rounded-full animate-bounce delay-75"></div>
+        </div>
+      )}
       {isLoading ? (
         <>
-          <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            />
-          </svg>
+          <div className="animate-spin -ml-1 mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
           {loadingText}
         </>
       ) : (

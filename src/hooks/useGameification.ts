@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type {
   PlayerGamification,
-  Achievement,
   AchievementNotification,
   GamificationEvent,
   Ingredient
@@ -11,7 +10,6 @@ import type { LeaderboardEntry } from '../types/leaderboard';
 
 import { AchievementService, ACHIEVEMENTS } from '../services/achievements';
 import { ProgressionService, PLAYER_LEVELS } from '../services/progression';
-import { StorageService } from '../services/storage';
 
 const GAMIFICATION_STORAGE_KEY = 'ragebait-gamification';
 const GAMIFICATION_EVENTS_KEY = 'ragebait-gamification-events';

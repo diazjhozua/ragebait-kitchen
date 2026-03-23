@@ -1,4 +1,4 @@
-import type { PlayerLevel, XPCalculationContext, PlayerGamification } from '../types/gamification';
+import type { PlayerLevel, PlayerGamification } from '../types/gamification';
 import type { JudgeResponse, Recipe, JudgeStyle } from '../types/game';
 
 // Hell's Kitchen Player Level System
@@ -234,7 +234,7 @@ export class ProgressionService {
    */
   static updatePlayerGamification(
     playerGamification: PlayerGamification,
-    recipe: Recipe,
+    _recipe: Recipe,
     response: JudgeResponse,
     judgeStyle: JudgeStyle,
     xpGained: number
@@ -322,7 +322,7 @@ export class ProgressionService {
   /**
    * Initialize new player gamification data
    */
-  static initializePlayer(playerName: string): PlayerGamification {
+  static initializePlayer(_playerName: string): PlayerGamification {
     return {
       level: 0,
       xp: 0,
