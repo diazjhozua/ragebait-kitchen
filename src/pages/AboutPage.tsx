@@ -504,9 +504,10 @@ function AboutPage() {
               </section>
             </div>
           )}
-          </div>
+          </div> {/* Close Tab Content div */}
         </div>
       </div>
+    </div>
     );
 }
 

@@ -1,17 +1,29 @@
 import { useState } from 'react';
 import { useHasValidApiKey } from '../hooks/useApiKey';
 import { useLeaderboard } from '../hooks/useLeaderboard';
+import { useGameification } from '../hooks/useGameification';
 import type { JudgeResponse, Recipe, JudgeStyle } from '../types/game';
 import type { LeaderboardEntry } from '../types/leaderboard';
+import type { AchievementNotification } from '../types/gamification';
 import ApiKeyPrompt from '../components/game/ApiKeyPrompt';
 import RecipeForm from '../components/game/RecipeForm';
 import JudgeResponseComponent from '../components/game/JudgeResponse';
 import Leaderboard from '../components/leaderboard/Leaderboard';
-import { KitchenAmbiance, ScoreAnimationWrapper } from '../components/effects/AnimationWrapper';
+import PlayerLevel from '../components/gamification/PlayerLevel';
+import AchievementBadge from '../components/gamification/AchievementBadge';
+import { KitchenAmbiance, ScoreAnimationWrapper, AchievementAnimationWrapper } from '../components/effects/AnimationWrapper';
 
 function PlayPage() {
   const hasValidApiKey = useHasValidApiKey();
-  const { addEntry } = useLeaderboard();
+  const { addEntry, entries } = useLeaderboard();
+  const {
+    player,
+    processRecipeSubmission,
+    clearNotifications,
+    getPlayerLevel,
+    getProgress,
+    initializePlayer
+  } = useGameification();
 
   const [judgeResponse, setJudgeResponse] = useState<JudgeResponse | null>(null);
   const [lastRecipe, setLastRecipe] = useState<Recipe | null>(null);
@@ -21,12 +33,45 @@ function PlayPage() {
   const [selectedEntry, setSelectedEntry] = useState<LeaderboardEntry | null>(null);
   const [showFullLeaderboard, setShowFullLeaderboard] = useState(false);
   const [resetKey, setResetKey] = useState(0);
+  const [activeNotifications, setActiveNotifications] = useState<AchievementNotification[]>([]);
+  const [showLevelUp, setShowLevelUp] = useState(false);
 
-  const handleJudgeComplete = (response: JudgeResponse, recipe: Recipe, playerName: string, judgeStyle: JudgeStyle) => {
+  const handleJudgeComplete = async (response: JudgeResponse, recipe: Recipe, playerName: string, judgeStyle: JudgeStyle) => {
     setJudgeResponse(response);
     setLastRecipe(recipe);
     setLastPlayerName(playerName);
     setLastJudgeStyle(judgeStyle);
+
+    // Initialize player if this is their first recipe
+    if (!player && playerName.trim()) {
+      initializePlayer(playerName.trim());
+    }
+
+    // Process gamification for this recipe submission
+    if (player || playerName.trim()) {
+      try {
+        const notifications = await processRecipeSubmission(
+          recipe,
+          response,
+          playerName.trim(),
+          judgeStyle,
+          entries
+        );
+
+        if (notifications.length > 0) {
+          setActiveNotifications(notifications);
+
+          // Check for level up
+          const hasLevelUp = notifications.some(n => n.levelUp);
+          if (hasLevelUp) {
+            setShowLevelUp(true);
+            setTimeout(() => setShowLevelUp(false), 5000); // Hide after 5 seconds
+          }
+        }
+      } catch (error) {
+        console.error('Failed to process gamification:', error);
+      }
+    }
   };
 
   const handleTryAgain = () => {
@@ -35,7 +80,18 @@ function PlayPage() {
     setLastPlayerName('');
     setLastJudgeStyle('classic-rage');
     setIsSaving(false);
+    setActiveNotifications([]);
+    setShowLevelUp(false);
     setResetKey(prev => prev + 1);
+  };
+
+  const handleDismissNotification = (index: number) => {
+    setActiveNotifications(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleDismissAllNotifications = () => {
+    setActiveNotifications([]);
+    clearNotifications();
   };
 
   const handleSaveToLeaderboard = async () => {
@@ -55,6 +111,8 @@ function PlayPage() {
     setLastPlayerName('');
     setLastJudgeStyle('classic-rage');
     setIsSaving(false);
+    setActiveNotifications([]);
+    setShowLevelUp(false);
     setResetKey(prev => prev + 1);
 
     // Save in background
@@ -103,6 +161,33 @@ function PlayPage() {
             <p className="text-lg text-steel-300 font-semibold">
               Think your cooking is good? <span className="text-hell-400 animate-pulse">Gordon Ramsay WILL disagree...</span>
             </p>
+
+            {/* Player Level Display */}
+            {player && getPlayerLevel() && (
+              <div className="mt-4 flex justify-center">
+                <PlayerLevel
+                  level={getPlayerLevel()!}
+                  currentXP={player.totalXP}
+                  nextLevel={getProgress().nextLevel}
+                  size="sm"
+                  showProgress={true}
+                />
+              </div>
+            )}
+
+            {/* Level Up Celebration */}
+            {showLevelUp && (
+              <AchievementAnimationWrapper isNew={true} rarity="legendary" className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="hell-kitchen-bg border-4 border-flame-500 rounded-lg p-6 shadow-2xl animate-scale-in">
+                  <div className="text-center">
+                    <div className="text-6xl mb-2 animate-gordon-rage">🏆</div>
+                    <div className="text-3xl font-bold text-flame-300 animate-burning-text">LEVEL UP!</div>
+                    <div className="text-lg text-hell-300 font-bold">{getPlayerLevel()?.title}</div>
+                  </div>
+                </div>
+              </AchievementAnimationWrapper>
+            )}
+
             {/* Decorative elements */}
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 flex space-x-8 opacity-70">
               <span className="text-2xl animate-steam">💨</span>
@@ -161,6 +246,44 @@ function PlayPage() {
             )}
           </div>
         </div>
+
+        {/* Achievement Notifications */}
+        {activeNotifications.length > 0 && (
+          <div className="fixed top-4 right-4 z-40 space-y-3 max-w-sm">
+            {activeNotifications.map((notification, index) => (
+              <AchievementAnimationWrapper key={index} isNew={true} rarity={notification.achievement.category === 'special' ? 'legendary' : 'epic'}>
+                <div className="relative">
+                  <AchievementBadge
+                    achievement={notification.achievement}
+                    size="lg"
+                    showDescription={true}
+                    isUnlocked={true}
+                    isNew={true}
+                  />
+                  <button
+                    onClick={() => handleDismissNotification(index)}
+                    className="absolute -top-2 -right-2 bg-hell-600 text-hell-100 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold hover:bg-hell-500 transition-colors"
+                  >
+                    ×
+                  </button>
+                  {notification.xpGained && (
+                    <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-flame-600 text-white text-xs px-2 py-1 rounded-full font-bold animate-bounce">
+                      +{notification.xpGained} XP
+                    </div>
+                  )}
+                </div>
+              </AchievementAnimationWrapper>
+            ))}
+            {activeNotifications.length > 1 && (
+              <button
+                onClick={handleDismissAllNotifications}
+                className="w-full text-center text-sm text-steel-400 hover:text-flame-400 transition-colors font-semibold"
+              >
+                Dismiss All ({activeNotifications.length})
+              </button>
+            )}
+          </div>
+        )}
 
         {hasValidApiKey && !judgeResponse && (
           <div className="mt-12 text-center animate-slide-up">
