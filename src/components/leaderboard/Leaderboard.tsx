@@ -89,24 +89,22 @@ export default function Leaderboard({
 
   if (isLoading && entries.length === 0) {
     return (
-      <div className={`bg-white rounded-lg shadow ${className}`}>
-        <LoadingSpinner size="md" message="Loading leaderboard..." className="py-8" />
+      <div className={`hell-kitchen-bg border-2 border-hell-600 rounded-lg shadow-xl hell-glow ${className}`}>
+        <LoadingSpinner size="md" message="Loading Hall of Shame..." className="py-8 loading-kitchen" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className={`bg-white rounded-lg shadow p-6 ${className}`}>
+      <div className={`hell-kitchen-bg border-2 border-hell-600 rounded-lg shadow-xl p-6 hell-glow ${className}`}>
         <div className="text-center">
-          <svg className="mx-auto h-12 w-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-          </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">Error loading leaderboard</h3>
-          <p className="mt-1 text-sm text-gray-500">{error}</p>
+          <div className="text-6xl mb-4 animate-gordon-rage">😡</div>
+          <h3 className="mt-2 text-lg font-bold text-hell-300 animate-burning-text">KITCHEN DISASTER!</h3>
+          <p className="mt-1 text-sm text-steel-300">{error}</p>
           <div className="mt-6">
-            <Button onClick={refresh} variant="outline" size="sm">
-              Try Again
+            <Button onClick={refresh} variant="hell" size="sm" withFlame={true}>
+              🔥 TRY AGAIN
             </Button>
           </div>
         </div>
@@ -116,60 +114,73 @@ export default function Leaderboard({
 
   if (totalEntries === 0) {
     return (
-      <div className={`bg-white rounded-lg shadow ${className}`}>
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">🏆 Leaderboard</h2>
+      <div className={`hell-kitchen-bg border-2 border-hell-600 rounded-lg shadow-xl hell-glow ${className}`}>
+        <div className="px-6 py-4 border-b border-flame-600 bg-gradient-to-r from-hell-800 to-hell-700">
+          <div className="flex items-center space-x-3">
+            <span className="text-3xl animate-flame-flicker">🏆</span>
+            <h2 className="text-xl font-bold text-hell-100 font-chef">HALL OF CULINARY SHAME</h2>
+          </div>
         </div>
         <div className="p-12 text-center">
-          <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-          <h3 className="mt-2 text-lg font-medium text-gray-900">No entries yet</h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Submit a recipe to get started and climb the leaderboard of culinary disasters!
+          <div className="text-8xl mb-6 animate-steam">💨</div>
+          <h3 className="mt-2 text-lg font-bold text-hell-300 animate-burning-text">THE KITCHEN IS EMPTY!</h3>
+          <p className="mt-1 text-sm text-steel-300 max-w-xs mx-auto">
+            No brave souls have dared to face Gordon's wrath yet. Submit a recipe to earn your place in the <span className="text-hell-400 font-bold">Hall of Shame!</span>
           </p>
+          <div className="mt-6 flex justify-center space-x-4 opacity-60">
+            <span className="text-2xl animate-sizzle">🔥</span>
+            <span className="text-2xl animate-gordon-rage delay-200">😈</span>
+            <span className="text-2xl animate-flame-flicker delay-400">💀</span>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`bg-white rounded-lg shadow ${className}`}>
+    <div className={`hell-kitchen-bg border-2 border-hell-600 rounded-lg shadow-xl hell-glow animate-fade-in ${className}`}>
       {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-200">
+      <div className="px-6 py-4 border-b border-flame-600 bg-gradient-to-r from-hell-800 to-hell-700">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">🏆 Leaderboard</h2>
-            <p className="text-sm text-gray-500 mt-1">
-              {totalEntries} {totalEntries === 1 ? 'entry' : 'entries'} total
+            <div className="flex items-center space-x-3 mb-2">
+              <span className="text-3xl animate-flame-flicker">🏆</span>
+              <h2 className="text-xl font-bold text-hell-100 font-chef animate-burning-text">HALL OF CULINARY SHAME</h2>
+              <span className="text-3xl animate-flame-flicker">🏆</span>
+            </div>
+            <p className="text-sm text-steel-300 font-semibold">
+              {totalEntries} {totalEntries === 1 ? 'disaster' : 'disasters'} recorded • <span className="text-flame-400">Gordon is watching</span>
             </p>
           </div>
 
           {showControls && (
             <div className="flex items-center space-x-2">
               <Button
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 onClick={refresh}
                 disabled={isLoading}
+                className="hover-sizzle"
               >
-                Refresh
+                🔄 Refresh
               </Button>
 
               <Button
-                variant="outline"
+                variant="chef"
                 size="sm"
                 onClick={handleExport}
+                className="hover-flame"
               >
-                Export
+                📤 Export
               </Button>
 
               <Button
-                variant="danger"
+                variant="hell"
                 size="sm"
                 onClick={() => setShowClearConfirm(true)}
+                withFlame={true}
               >
-                Clear All
+                🗑️ Clear All
               </Button>
             </div>
           )}
@@ -177,68 +188,68 @@ export default function Leaderboard({
 
         {/* Stats */}
         <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900">{stats.averageRageScore}</div>
-            <div className="text-xs text-gray-500">Avg Rage Score</div>
+          <div className="text-center hell-kitchen-bg border border-steel-600 rounded-lg p-3 hover:scale-105 transition-transform duration-200">
+            <div className="text-2xl font-bold text-flame-400 animate-sizzle">{stats.averageRageScore}</div>
+            <div className="text-xs text-steel-400 font-semibold">AVG RAGE</div>
           </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-red-600">{stats.highestRageScore}</div>
-            <div className="text-xs text-gray-500">Highest Rage</div>
+          <div className="text-center hell-kitchen-bg border border-steel-600 rounded-lg p-3 hover:scale-105 transition-transform duration-200">
+            <div className="text-2xl font-bold text-hell-400 animate-hell-pulse">{stats.highestRageScore}</div>
+            <div className="text-xs text-steel-400 font-semibold">MAX FURY</div>
           </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">{stats.lowestRageScore}</div>
-            <div className="text-xs text-gray-500">Lowest Rage</div>
+          <div className="text-center hell-kitchen-bg border border-steel-600 rounded-lg p-3 hover:scale-105 transition-transform duration-200">
+            <div className="text-2xl font-bold text-green-400">{stats.lowestRageScore}</div>
+            <div className="text-xs text-steel-400 font-semibold">LEAST BAD</div>
           </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900">{stats.mostCommonTags[0]?.count || 0}</div>
-            <div className="text-xs text-gray-500">Most Common Tag</div>
+          <div className="text-center hell-kitchen-bg border border-steel-600 rounded-lg p-3 hover:scale-105 transition-transform duration-200">
+            <div className="text-2xl font-bold text-flame-300 animate-steam">{stats.mostCommonTags[0]?.count || 0}</div>
+            <div className="text-xs text-steel-400 font-semibold">TOP TAG</div>
           </div>
         </div>
 
         {/* Sorting controls */}
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <span className="text-sm font-medium text-gray-700">Sort by:</span>
+            <span className="text-sm font-bold text-flame-300 flex items-center space-x-2">
+              <span>⚔️</span>
+              <span>Sort by:</span>
+            </span>
             <button
               onClick={() => handleSortChange('rage_score')}
-              className={`text-sm px-3 py-1 rounded-full transition-colors ${
+              className={`text-sm px-4 py-2 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 ${
                 sortBy === 'rage_score'
-                  ? 'bg-rage-100 text-rage-700 font-medium'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-hell-600 text-hell-100 border-2 border-flame-500 animate-hell-pulse'
+                  : 'bg-kitchen-700 text-steel-300 border-2 border-steel-600 hover:bg-kitchen-600 hover:border-flame-600'
               }`}
             >
-              Rage Score {sortBy === 'rage_score' && (sortOrder === 'desc' ? '↓' : '↑')}
+              🔥 Rage Score {sortBy === 'rage_score' && (sortOrder === 'desc' ? '↓' : '↑')}
             </button>
             <button
               onClick={() => handleSortChange('date')}
-              className={`text-sm px-3 py-1 rounded-full transition-colors ${
+              className={`text-sm px-4 py-2 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 ${
                 sortBy === 'date'
-                  ? 'bg-rage-100 text-rage-700 font-medium'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-hell-600 text-hell-100 border-2 border-flame-500 animate-hell-pulse'
+                  : 'bg-kitchen-700 text-steel-300 border-2 border-steel-600 hover:bg-kitchen-600 hover:border-flame-600'
               }`}
             >
-              Date {sortBy === 'date' && (sortOrder === 'desc' ? '↓' : '↑')}
+              📅 Date {sortBy === 'date' && (sortOrder === 'desc' ? '↓' : '↑')}
             </button>
           </div>
 
           {isLoading && (
-            <div className="flex items-center text-sm text-gray-500">
-              <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-              </svg>
-              Loading...
+            <div className="flex items-center text-sm text-flame-400 font-semibold">
+              <div className="animate-spin -ml-1 mr-2 h-4 w-4 border-2 border-flame-500 border-t-transparent rounded-full"></div>
+              Gordon is judging...
             </div>
           )}
         </div>
       </div>
 
       {/* Entries */}
-      <div className="divide-y divide-gray-200">
+      <div className="divide-y divide-flame-600">
         {entries.map((entry, index) => {
           const rank = (currentPage * pageSize) + index + 1;
           return (
-            <div key={entry.id} className="p-4">
+            <div key={entry.id} className="p-4 hell-kitchen-bg hover:bg-kitchen-700 transition-colors duration-200">
               <LeaderboardEntryComponent
                 entry={entry}
                 rank={rank}
@@ -263,55 +274,55 @@ export default function Leaderboard({
         onPrevPage={prevPage}
       />
 
-      {/* Clear confirmation modal */}
-      {showClearConfirm && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-            </div>
+        {/* Clear confirmation modal */}
+        {showClearConfirm && (
+          <div className="fixed inset-0 z-50 overflow-y-auto animate-fade-in">
+            <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+              <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div className="absolute inset-0 bg-kitchen-900 opacity-90"></div>
+              </div>
 
-            <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
-              <div className="sm:flex sm:items-start">
-                <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                  <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                  </svg>
-                </div>
-                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">
-                    Clear All Entries
-                  </h3>
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500">
-                      Are you sure you want to delete all {totalEntries} leaderboard entries? This action cannot be undone.
-                    </p>
+              <div className="inline-block align-bottom hell-kitchen-bg border-2 border-hell-600 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 hell-glow animate-scale-in">
+                <div className="sm:flex sm:items-start">
+                  <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-hell-800 border-2 border-hell-600 sm:mx-0 sm:h-10 sm:w-10 animate-hell-pulse">
+                    <div className="text-2xl animate-gordon-rage">💀</div>
+                  </div>
+                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <h3 className="text-lg leading-6 font-bold text-hell-300 font-chef animate-burning-text">
+                      CLEAR ALL DISASTERS?
+                    </h3>
+                    <div className="mt-2">
+                      <p className="text-sm text-steel-300">
+                        Are you sure you want to <span className="text-hell-400 font-bold">OBLITERATE</span> all {totalEntries} leaderboard disasters?
+                        <span className="text-flame-400 font-semibold"> This action cannot be undone!</span>
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                <Button
-                  variant="danger"
-                  onClick={handleClearLeaderboard}
-                  isLoading={isClearing}
-                  loadingText="Clearing..."
-                  className="w-full sm:w-auto sm:ml-3"
-                >
-                  Clear All
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowClearConfirm(false)}
-                  disabled={isClearing}
-                  className="mt-3 w-full sm:mt-0 sm:w-auto"
-                >
-                  Cancel
-                </Button>
+                <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse space-y-2 sm:space-y-0">
+                  <Button
+                    variant="hell"
+                    onClick={handleClearLeaderboard}
+                    isLoading={isClearing}
+                    loadingText="💀 OBLITERATING..."
+                    className="w-full sm:w-auto sm:ml-3"
+                    withFlame={true}
+                  >
+                    🗑️ CLEAR ALL
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setShowClearConfirm(false)}
+                    disabled={isClearing}
+                    className="mt-3 w-full sm:mt-0 sm:w-auto"
+                  >
+                    🛡️ Cancel
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }
