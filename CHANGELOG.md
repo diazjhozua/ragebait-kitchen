@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.0.1...v1.1.0) (2026-03-25)
+
+
+### Features
+
+* polish leaderboard UI and optimize sidebar layout ([dbf888a](https://github.com/diazjhozua/ragebait-kitchen/commit/dbf888ab69e748407d623d405fd4e4c5c3e1b7cf))
+
 ## [1.0.1](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.0.0...v1.0.1) (2026-03-25)
 
 
