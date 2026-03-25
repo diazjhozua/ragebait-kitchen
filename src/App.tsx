@@ -12,55 +12,116 @@ function Navigation() {
   const location = useLocation()
 
   const isActive = (path: string) => {
-    if (path === '/') {
-      return location.pathname === '/'
-    }
+    if (path === '/') return location.pathname === '/'
     return location.pathname.startsWith(path)
   }
 
+  const navLinks = [
+    { to: '/', label: 'Play', icon: '🎮', path: '/' },
+    { to: '/about', label: 'About', icon: '⚔️', path: '/about' },
+  ]
+
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40 backdrop-blur-sm bg-white/80">
+    <nav
+      className="sticky top-0 z-50"
+      style={{
+        background: 'linear-gradient(180deg, #080000 0%, #130303 60%, #1a0505 100%)',
+        borderBottom: '1px solid rgba(220,38,38,0.25)',
+        boxShadow: '0 4px 40px rgba(0,0,0,0.9), 0 1px 0 rgba(220,38,38,0.1) inset',
+      }}
+    >
+      {/* Flame accent strip — top */}
+      <div style={{ height: '2px', background: 'linear-gradient(90deg, transparent 0%, #7f1d1d 20%, #dc2626 40%, #f97316 50%, #dc2626 60%, #7f1d1d 80%, transparent 100%)' }} />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex">
-            <Link
-              to="/"
-              className="flex-shrink-0 flex items-center group transition-transform duration-200 hover:scale-105"
+        <div className="flex justify-between items-center" style={{ height: '64px' }}>
+
+          {/* Brand / Logo */}
+          <Link to="/" className="flex items-center gap-3 group shrink-0">
+            <span
+              className="text-3xl transition-all duration-300 group-hover:scale-125 group-hover:rotate-12"
+              style={{ filter: 'drop-shadow(0 0 10px rgba(249,115,22,0.85))' }}
             >
-              <h1 className="text-xl font-bold text-rage-700 group-hover:text-rage-800 transition-colors duration-200">
-                🍳 Let's Ragebait Gordon Ramsay
-              </h1>
-            </Link>
-            <div className="hidden sm:ml-8 sm:flex sm:space-x-8">
-              <Link
-                to="/"
-                className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-all duration-200 ${
-                  isActive('/')
-                    ? 'border-rage-500 text-rage-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+              🔥
+            </span>
+            <div className="leading-none">
+              <div
+                className="font-chef font-black uppercase tracking-widest text-white"
+                style={{
+                  fontSize: '18px',
+                  letterSpacing: '0.18em',
+                  textShadow: '0 0 18px rgba(220,38,38,0.95), 0 0 36px rgba(220,38,38,0.5), 0 0 60px rgba(220,38,38,0.2)',
+                }}
               >
-                🎮 Play
-              </Link>
-              <Link
-                to="/about"
-                className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-all duration-200 ${
-                  isActive('/about')
-                    ? 'border-rage-500 text-rage-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                Hell's Kitchen
+              </div>
+              <div
+                className="font-black uppercase text-red-500"
+                style={{ fontSize: '8px', letterSpacing: '0.38em', marginTop: '1px', opacity: 0.9 }}
               >
-                ℹ️ About
-              </Link>
+                Ragebait Simulator
+              </div>
             </div>
+          </Link>
+
+          {/* Desktop nav links */}
+          <div className="hidden sm:flex items-center gap-1">
+            {navLinks.map(({ to, label, icon, path }) => {
+              const active = isActive(path)
+              return (
+                <Link
+                  key={to}
+                  to={to}
+                  className="relative px-5 py-2 rounded font-black uppercase transition-all duration-200"
+                  style={{
+                    fontSize: '11px',
+                    letterSpacing: '0.22em',
+                    color: active ? '#ffffff' : 'rgba(239,68,68,0.65)',
+                    background: active ? 'rgba(127,29,29,0.5)' : 'transparent',
+                    border: active ? '1px solid rgba(220,38,38,0.45)' : '1px solid transparent',
+                    textShadow: active ? '0 0 12px rgba(220,38,38,0.9)' : 'none',
+                    boxShadow: active ? '0 0 15px rgba(220,38,38,0.15) inset' : 'none',
+                  }}
+                  onMouseEnter={e => {
+                    if (!active) {
+                      (e.currentTarget as HTMLElement).style.color = '#ffffff'
+                      ;(e.currentTarget as HTMLElement).style.background = 'rgba(127,29,29,0.3)'
+                      ;(e.currentTarget as HTMLElement).style.border = '1px solid rgba(220,38,38,0.3)'
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (!active) {
+                      (e.currentTarget as HTMLElement).style.color = 'rgba(239,68,68,0.65)'
+                      ;(e.currentTarget as HTMLElement).style.background = 'transparent'
+                      ;(e.currentTarget as HTMLElement).style.border = '1px solid transparent'
+                    }
+                  }}
+                >
+                  <span className="mr-1.5">{icon}</span>
+                  {label}
+                  {active && (
+                    <span
+                      className="absolute left-1/2 -translate-x-1/2 rounded-full"
+                      style={{
+                        bottom: '-1px',
+                        width: '28px',
+                        height: '2px',
+                        background: 'linear-gradient(90deg, #dc2626, #f97316, #dc2626)',
+                        boxShadow: '0 0 8px rgba(249,115,22,0.8)',
+                      }}
+                    />
+                  )}
+                </Link>
+              )
+            })}
           </div>
 
-          {/* Mobile menu button (for future mobile menu implementation) */}
-          <div className="flex items-center sm:hidden">
+          {/* Mobile hamburger */}
+          <div className="flex sm:hidden">
             <button
               type="button"
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-rage-500"
-              aria-expanded="false"
+              className="p-2 rounded transition-all duration-200"
+              style={{ color: 'rgba(239,68,68,0.7)' }}
               aria-label="Main menu"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -69,33 +130,32 @@ function Navigation() {
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Mobile menu (hidden by default) */}
-        <div className="sm:hidden border-t border-gray-200 py-2">
-          <div className="space-y-1">
+      {/* Mobile menu */}
+      <div className="sm:hidden py-2" style={{ borderTop: '1px solid rgba(220,38,38,0.2)', background: 'rgba(8,0,0,0.95)' }}>
+        <div className="px-4 space-y-1">
+          {navLinks.map(({ to, label, icon, path }) => (
             <Link
-              to="/"
-              className={`block px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
-                isActive('/')
-                  ? 'bg-rage-50 text-rage-600'
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-              }`}
+              key={to}
+              to={to}
+              className="flex items-center gap-2 px-3 py-2 rounded font-black uppercase transition-all duration-200"
+              style={{
+                fontSize: '11px',
+                letterSpacing: '0.22em',
+                color: isActive(path) ? '#fff' : 'rgba(239,68,68,0.7)',
+                background: isActive(path) ? 'rgba(127,29,29,0.5)' : 'transparent',
+              }}
             >
-              🎮 Play
+              <span>{icon}</span>
+              {label}
             </Link>
-            <Link
-              to="/about"
-              className={`block px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
-                isActive('/about')
-                  ? 'bg-rage-50 text-rage-600'
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              ℹ️ About
-            </Link>
-          </div>
+          ))}
         </div>
       </div>
+
+      {/* Flame accent strip — bottom */}
+      <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent 0%, rgba(220,38,38,0.5) 50%, transparent 100%)' }} />
     </nav>
   )
 }
@@ -103,7 +163,7 @@ function Navigation() {
 // Loading fallback component
 function PageLoader() {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center">
       <LoadingSpinner
         size="lg"
         message="Loading the kitchen..."
@@ -116,31 +176,36 @@ function PageLoader() {
 // 404 Page component
 function NotFoundPage() {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center px-4">
       <div className="max-w-md w-full text-center">
         <div className="mb-8">
-          <div className="text-6xl mb-4">🍳</div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">Page Not Found</h2>
-          <p className="text-gray-600">
-            Looks like this recipe got burned! The page you're looking for doesn't exist.
+          <div className="text-6xl mb-4" style={{ filter: 'drop-shadow(0 0 12px rgba(249,115,22,0.7))' }}>🔥</div>
+          <h1
+            className="font-chef font-black mb-3"
+            style={{ fontSize: '72px', color: '#dc2626', textShadow: '0 0 30px rgba(220,38,38,0.6)', lineHeight: 1 }}
+          >
+            404
+          </h1>
+          <h2 className="text-xl font-bold text-white mb-2" style={{ letterSpacing: '0.1em' }}>
+            RECIPE NOT FOUND
+          </h2>
+          <p style={{ color: 'rgba(156,163,175,0.8)', fontSize: '14px' }}>
+            Looks like this dish got burned beyond recognition.
           </p>
         </div>
         <div className="space-y-3">
           <Link
             to="/"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-rage-600 hover:bg-rage-700 transition-colors duration-200"
+            className="inline-flex items-center gap-2 px-6 py-3 font-black uppercase text-sm rounded transition-all duration-200 hover:scale-105"
+            style={{
+              background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
+              color: '#fff',
+              letterSpacing: '0.15em',
+              boxShadow: '0 0 20px rgba(220,38,38,0.4)',
+            }}
           >
-            🎮 Back to Game
+            🎮 Back to Kitchen
           </Link>
-          <div>
-            <Link
-              to="/about"
-              className="text-rage-600 hover:text-rage-500 text-sm font-medium transition-colors duration-200"
-            >
-              Learn About the Game
-            </Link>
-          </div>
         </div>
       </div>
     </div>
@@ -155,7 +220,7 @@ function App() {
       showReload={true}
     >
       <Router>
-        <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="min-h-screen flex flex-col" style={{ background: 'transparent' }}>
           <Navigation />
 
           <main className="flex-1 fade-in">
@@ -189,18 +254,37 @@ function App() {
           </main>
 
           {/* Footer */}
-          <footer className="bg-white border-t border-gray-200 mt-auto">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-              <div className="flex flex-col sm:flex-row justify-between items-center">
-                <div className="text-sm text-gray-500 mb-4 sm:mb-0">
-                  <span>Made with ❤️ for culinary chaos</span>
-                  <span className="hidden sm:inline mx-2">•</span>
-                  <span className="block sm:inline">No actual Gordon Ramsays were harmed</span>
+          <footer
+            className="mt-auto"
+            style={{
+              background: 'linear-gradient(180deg, #0a0000 0%, #080000 100%)',
+              borderTop: '1px solid rgba(220,38,38,0.2)',
+            }}
+          >
+            {/* Top flame strip */}
+            <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent 0%, rgba(220,38,38,0.5) 30%, rgba(249,115,22,0.6) 50%, rgba(220,38,38,0.5) 70%, transparent 100%)' }} />
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div className="flex items-center gap-2.5">
+                  <span style={{ filter: 'drop-shadow(0 0 6px rgba(249,115,22,0.7))' }}>🔥</span>
+                  <span
+                    className="font-chef italic"
+                    style={{ color: 'rgba(220,38,38,0.8)', fontSize: '14px', fontWeight: 700 }}
+                  >
+                    Hell's Kitchen
+                  </span>
+                  <span style={{ color: 'rgba(107,114,128,0.5)' }}>•</span>
+                  <span style={{ color: 'rgba(107,114,128,0.6)', fontSize: '13px' }}>
+                    No actual Gordon Ramsays were harmed
+                  </span>
                 </div>
-                <div className="flex items-center space-x-4 text-sm text-gray-500">
+                <div
+                  className="flex items-center gap-3"
+                  style={{ fontSize: '11px', color: 'rgba(107,114,128,0.55)', letterSpacing: '0.05em' }}
+                >
                   <span>Powered by OpenAI</span>
-                  <span>•</span>
-                  <span>Built with React & TypeScript</span>
+                  <span style={{ color: 'rgba(220,38,38,0.4)' }}>•</span>
+                  <span>React &amp; TypeScript</span>
                 </div>
               </div>
             </div>
