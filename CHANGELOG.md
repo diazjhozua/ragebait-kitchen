@@ -1,0 +1,19 @@
+# 1.0.0 (2026-03-25)
+
+
+### Features
+
+* add about page and polish user interface ([8958d12](https://github.com/diazjhozua/ragebait-kitchen/commit/8958d124f273ff49339914016d0c1b469af49838))
+* add custom API endpoint support and flexible configuration ([5a31824](https://github.com/diazjhozua/ragebait-kitchen/commit/5a3182492282306b5caee298c95a7c7516e0ed45))
+* implement automated deployment and finalize Hell's Kitchen branding ([2a9c245](https://github.com/diazjhozua/ragebait-kitchen/commit/2a9c245fcc8ca27804a849987b1f59bab855a937))
+* implement game UI components and core gameplay loop ([cf72c77](https://github.com/diazjhozua/ragebait-kitchen/commit/cf72c778c776cc8db6e22b8224f92d1ae8230ad6))
+* implement Hell's Kitchen theme and gamification type system ([885a8e2](https://github.com/diazjhozua/ragebait-kitchen/commit/885a8e27f5f14d536a7246443f2501b62d922bb2)), closes [hi#intensity](https://github.com/hi/issues/intensity)
+* implement Hell's Kitchen visual theme and gamification UI components ([48cc745](https://github.com/diazjhozua/ragebait-kitchen/commit/48cc7458d40b85635cfd2e07c828121348984d1d)), closes [hi#intensity](https://github.com/hi/issues/intensity)
+* implement local leaderboard and data persistence ([ca6537c](https://github.com/diazjhozua/ragebait-kitchen/commit/ca6537c5cc5e93468a21d4631f89330fc7213610))
+* implement openai integration and recipe judging logic ([bed8bb7](https://github.com/diazjhozua/ragebait-kitchen/commit/bed8bb7254e023be044eaa1d0eeeb4124a7a1c00))
+* implement player progression and achievement systems ([9eb2667](https://github.com/diazjhozua/ragebait-kitchen/commit/9eb2667af80034b88b547502e8be3dce4f4a0a3b))
+* implement reactive animation system and immersive kitchen visuals ([05302b3](https://github.com/diazjhozua/ragebait-kitchen/commit/05302b3e0e9f9dd34e6931d789abf64033847e4f)), closes [hi#intensity](https://github.com/hi/issues/intensity)
+* implement recipe similarity detection and score penalties ([8df0519](https://github.com/diazjhozua/ragebait-kitchen/commit/8df05197581006221df804903d586bd0277ef890))
+* improve recipe submission flow and form reset mechanism ([665fc51](https://github.com/diazjhozua/ragebait-kitchen/commit/665fc518d91a94cacf21a45a7911ed18ae43ef91))
+* initialize vite react typescript project with tailwind and routing ([c5b8031](https://github.com/diazjhozua/ragebait-kitchen/commit/c5b80316b25519e65c0b693b39e440501777293a))
+* integrate gamification and player progression into the PlayPage ([a9755f6](https://github.com/diazjhozua/ragebait-kitchen/commit/a9755f6ea2627dfc337a5aee690d197742646866))
