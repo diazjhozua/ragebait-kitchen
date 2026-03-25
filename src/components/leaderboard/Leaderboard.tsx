@@ -140,51 +140,44 @@ export default function Leaderboard({
   return (
     <div className={`hell-kitchen-bg border-2 border-hell-600 rounded-lg shadow-xl hell-glow animate-fade-in ${className}`}>
       {/* Header */}
-      <div className="px-6 py-4 border-b border-flame-600 bg-gradient-to-r from-hell-800 to-hell-700">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center space-x-3 mb-2">
-              <span className="text-3xl animate-flame-flicker">🏆</span>
-              <h2 className="text-xl font-bold text-hell-100 font-chef animate-burning-text">HALL OF CULINARY SHAME</h2>
-              <span className="text-3xl animate-flame-flicker">🏆</span>
-            </div>
-            <p className="text-sm text-steel-300 font-semibold">
-              {totalEntries} {totalEntries === 1 ? 'disaster' : 'disasters'} recorded • <span className="text-flame-400">Gordon is watching</span>
-            </p>
-          </div>
-
-          {showControls && (
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={refresh}
-                disabled={isLoading}
-                className="hover-sizzle"
-              >
-                🔄 Refresh
-              </Button>
-
-              <Button
-                variant="chef"
-                size="sm"
-                onClick={handleExport}
-                className="hover-flame"
-              >
-                📤 Export
-              </Button>
-
-              <Button
-                variant="hell"
-                size="sm"
-                onClick={() => setShowClearConfirm(true)}
-                withFlame={true}
-              >
-                🗑️ Clear All
-              </Button>
-            </div>
-          )}
+      <div className="px-4 py-4 border-b border-flame-600 bg-gradient-to-r from-hell-800 to-hell-700">
+        {/* Title row */}
+        <div className="flex items-center space-x-2 mb-1">
+          <span className="text-2xl animate-flame-flicker">🏆</span>
+          <h2 className="text-lg font-bold text-hell-100 font-chef animate-burning-text truncate">HALL OF CULINARY SHAME</h2>
+          <span className="text-2xl animate-flame-flicker shrink-0">🏆</span>
         </div>
+        <p className="text-xs text-steel-300 font-semibold mb-3">
+          {totalEntries} {totalEntries === 1 ? 'disaster' : 'disasters'} recorded • <span className="text-flame-400">Gordon is watching</span>
+        </p>
+
+        {/* Controls row */}
+        {showControls && (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={refresh}
+              disabled={isLoading}
+              title="Refresh"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-bold bg-kitchen-700 text-steel-300 border border-steel-600 hover:bg-kitchen-600 hover:text-white transition-all disabled:opacity-50"
+            >
+              🔄 <span>Refresh</span>
+            </button>
+            <button
+              onClick={handleExport}
+              title="Export JSON"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-bold bg-kitchen-700 text-steel-300 border border-steel-600 hover:bg-kitchen-600 hover:text-white transition-all"
+            >
+              📤 <span>Export</span>
+            </button>
+            <button
+              onClick={() => setShowClearConfirm(true)}
+              title="Clear leaderboard"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-bold bg-hell-800 text-hell-300 border border-hell-600 hover:bg-hell-700 hover:text-white transition-all ml-auto"
+            >
+              🗑️ <span>Clear</span>
+            </button>
+          </div>
+        )}
 
         {/* Stats */}
         <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -207,39 +200,30 @@ export default function Leaderboard({
         </div>
 
         {/* Sorting controls */}
-        <div className="mt-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <span className="text-sm font-bold text-flame-300 flex items-center space-x-2">
-              <span>⚔️</span>
-              <span>Sort by:</span>
-            </span>
-            <button
-              onClick={() => handleSortChange('rage_score')}
-              className={`text-sm px-4 py-2 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 ${
-                sortBy === 'rage_score'
-                  ? 'bg-hell-600 text-hell-100 border-2 border-flame-500 animate-hell-pulse'
-                  : 'bg-kitchen-700 text-steel-300 border-2 border-steel-600 hover:bg-kitchen-600 hover:border-flame-600'
-              }`}
-            >
-              🔥 Rage Score {sortBy === 'rage_score' && (sortOrder === 'desc' ? '↓' : '↑')}
-            </button>
-            <button
-              onClick={() => handleSortChange('date')}
-              className={`text-sm px-4 py-2 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 ${
-                sortBy === 'date'
-                  ? 'bg-hell-600 text-hell-100 border-2 border-flame-500 animate-hell-pulse'
-                  : 'bg-kitchen-700 text-steel-300 border-2 border-steel-600 hover:bg-kitchen-600 hover:border-flame-600'
-              }`}
-            >
-              📅 Date {sortBy === 'date' && (sortOrder === 'desc' ? '↓' : '↑')}
-            </button>
-          </div>
-
+        <div className="mt-3 flex items-center gap-2">
+          <span className="text-xs font-bold text-flame-300 shrink-0">⚔️ Sort:</span>
+          <button
+            onClick={() => handleSortChange('rage_score')}
+            className={`flex-1 text-xs px-2 py-1.5 rounded font-bold transition-all duration-200 ${
+              sortBy === 'rage_score'
+                ? 'bg-hell-600 text-hell-100 border border-flame-500'
+                : 'bg-kitchen-700 text-steel-300 border border-steel-600 hover:bg-kitchen-600'
+            }`}
+          >
+            🔥 Rage {sortBy === 'rage_score' && (sortOrder === 'desc' ? '↓' : '↑')}
+          </button>
+          <button
+            onClick={() => handleSortChange('date')}
+            className={`flex-1 text-xs px-2 py-1.5 rounded font-bold transition-all duration-200 ${
+              sortBy === 'date'
+                ? 'bg-hell-600 text-hell-100 border border-flame-500'
+                : 'bg-kitchen-700 text-steel-300 border border-steel-600 hover:bg-kitchen-600'
+            }`}
+          >
+            📅 Date {sortBy === 'date' && (sortOrder === 'desc' ? '↓' : '↑')}
+          </button>
           {isLoading && (
-            <div className="flex items-center text-sm text-flame-400 font-semibold">
-              <div className="animate-spin -ml-1 mr-2 h-4 w-4 border-2 border-flame-500 border-t-transparent rounded-full"></div>
-              Gordon is judging...
-            </div>
+            <div className="animate-spin h-4 w-4 border-2 border-flame-500 border-t-transparent rounded-full shrink-0" />
           )}
         </div>
       </div>

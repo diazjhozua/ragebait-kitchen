@@ -234,7 +234,7 @@ function PlayPage() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
           {/* Recipe Form Panel */}
           <div className="xl:col-span-2 animate-fade-in">
             {hasValidApiKey ? (
@@ -255,7 +255,7 @@ function PlayPage() {
           </div>
 
           {/* Results/Leaderboard Panel */}
-          <div className="xl:col-span-1 animate-fade-in delay-200">
+          <div className="xl:col-span-1 animate-fade-in delay-200 xl:sticky xl:top-8 xl:max-h-[calc(100vh-6rem)] xl:overflow-y-auto">
             {judgeResponse ? (
               <ScoreAnimationWrapper score={judgeResponse.rage_score}>
                 <JudgeResponseComponent
@@ -263,16 +263,13 @@ function PlayPage() {
                   onSaveToLeaderboard={handleSaveToLeaderboard}
                   onTryAgain={handleTryAgain}
                   isSaving={isSaving}
-                  className="sticky top-8"
                 />
               </ScoreAnimationWrapper>
             ) : (
-              <div className="sticky top-8">
-                <Leaderboard
-                  showControls={true}
-                  onEntryClick={handleEntryClick}
-                />
-              </div>
+              <Leaderboard
+                showControls={true}
+                onEntryClick={handleEntryClick}
+              />
             )}
           </div>
         </div>
