@@ -29,15 +29,16 @@
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-gray-100;
+    background: #0d0000;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 rounded-full;
+    background: rgba(220,38,38,0.35);
+    border-radius: 9999px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400;
+    background: rgba(220,38,38,0.6);
   }
 
   /* Focus styles */
