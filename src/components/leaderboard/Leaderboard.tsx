@@ -229,11 +229,11 @@ export default function Leaderboard({
       </div>
 
       {/* Entries */}
-      <div className="divide-y divide-flame-600">
+      <div className="divide-y divide-kitchen-700/60 px-2">
         {entries.map((entry, index) => {
           const rank = (currentPage * pageSize) + index + 1;
           return (
-            <div key={entry.id} className="p-4 hell-kitchen-bg hover:bg-kitchen-700 transition-colors duration-200">
+            <div key={entry.id}>
               <LeaderboardEntryComponent
                 entry={entry}
                 rank={rank}

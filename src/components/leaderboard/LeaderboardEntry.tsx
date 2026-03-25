@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import type { LeaderboardEntry } from '../../types/leaderboard';
 import { RageScoreBadge } from '../game/RageScore';
-import Button from '../common/Button';
 
 interface LeaderboardEntryProps {
   entry: LeaderboardEntry;
@@ -50,119 +49,132 @@ export default function LeaderboardEntryComponent({
     return `#${rank}`;
   };
 
-  const getRankColor = () => {
-    if (rank === 1) return 'text-yellow-600 bg-yellow-50';
-    if (rank === 2) return 'text-gray-600 bg-gray-50';
-    if (rank === 3) return 'text-amber-600 bg-amber-50';
-    return 'text-gray-500 bg-gray-50';
+  const getScoreColor = (s: number) => {
+    if (s >= 90) return { text: '#f87171', glow: 'rgba(239,68,68,0.5)' };
+    if (s >= 70) return { text: '#fb923c', glow: 'rgba(249,115,22,0.4)' };
+    if (s >= 50) return { text: '#fbbf24', glow: 'rgba(251,191,36,0.35)' };
+    if (s >= 30) return { text: '#a3e635', glow: 'rgba(163,230,53,0.3)' };
+    return { text: '#4ade80', glow: 'rgba(74,222,128,0.3)' };
   };
 
-  return (
-    <div className={`bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow ${className}`}>
-      <div className="p-4">
-        {/* Header with rank and basic info */}
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center space-x-3">
-            {/* Rank */}
-            <div className={`px-2 py-1 rounded-full text-sm font-bold ${getRankColor()}`}>
-              {getRankDisplay()}
-            </div>
+  const scoreColor = getScoreColor(entry.rage_score);
 
-            {/* Player name and date */}
-            <div>
-              <h3 className="font-semibold text-gray-900">
+  return (
+    <div className={`group ${className}`}>
+      {/* Collapsed row — always visible */}
+      <button
+        className="w-full text-left"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center gap-2.5 py-2 px-1 rounded hover:bg-kitchen-700/50 transition-colors duration-150">
+          {/* Rank */}
+          <span
+            className="shrink-0 text-sm font-black w-7 text-center"
+            style={{ color: rank <= 3 ? undefined : 'rgba(107,114,128,0.7)' }}
+          >
+            {getRankDisplay()}
+          </span>
+
+          {/* Name + recipe title */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-baseline gap-1.5 min-w-0">
+              <span className="text-sm font-bold text-white truncate leading-tight">
                 {entry.playerName}
-              </h3>
-              <p className="text-xs text-gray-500">
-                {formatDate(entry.createdAt)}
-              </p>
+              </span>
+            </div>
+            <p className="text-xs truncate leading-tight" style={{ color: 'rgba(156,163,175,0.7)' }}>
+              {entry.recipeTitle || 'Untitled Recipe'}
+            </p>
+          </div>
+
+          {/* Score */}
+          <div className="shrink-0 text-right">
+            <span
+              className="text-lg font-black leading-none"
+              style={{ color: scoreColor.text, textShadow: `0 0 10px ${scoreColor.glow}` }}
+            >
+              {entry.rage_score}
+            </span>
+            <div className="text-[9px] font-bold uppercase tracking-wider" style={{ color: 'rgba(107,114,128,0.6)' }}>
+              rage
             </div>
           </div>
 
-          {/* Rage score */}
-          <RageScoreBadge score={entry.rage_score} />
+          {/* Expand chevron */}
+          <span
+            className="shrink-0 text-xs transition-transform duration-200"
+            style={{
+              color: 'rgba(107,114,128,0.5)',
+              transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+            }}
+          >
+            ▾
+          </span>
         </div>
+      </button>
 
-        {/* Recipe title and preview */}
-        <div className="mb-3">
-          <h4 className="font-medium text-gray-800 mb-1">
-            {entry.recipeTitle || 'Untitled Recipe'}
-          </h4>
-          <p className="text-sm text-gray-600">
-            {isExpanded
-              ? entry.recipeContent
-              : truncateText(entry.recipeContent, 100)}
-            {entry.recipeContent.length > 100 && (
-              <button
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="ml-2 text-rage-600 hover:text-rage-700 text-xs font-medium underline"
-              >
-                {isExpanded ? 'Show less' : 'Show more'}
-              </button>
-            )}
-          </p>
-        </div>
+      {/* Expanded section */}
+      {isExpanded && (
+        <div
+          className="mx-1 mb-2 rounded-lg overflow-hidden"
+          style={{ background: 'rgba(17,24,39,0.7)', border: '1px solid rgba(220,38,38,0.2)' }}
+        >
+          {/* Gordon's reaction */}
+          <div className="px-3 pt-3 pb-2">
+            <p className="text-xs italic font-chef leading-relaxed" style={{ color: 'rgba(209,213,219,0.85)' }}>
+              "{truncateText(entry.reaction, 140)}"
+            </p>
+          </div>
 
-        {/* Tags */}
-        {entry.tags.length > 0 && (
-          <div className="mb-3">
-            <div className="flex flex-wrap gap-1">
-              {entry.tags.slice(0, 4).map((tag, index) => (
+          {/* Tags */}
+          {entry.tags.length > 0 && (
+            <div className="px-3 pb-2 flex flex-wrap gap-1">
+              {entry.tags.slice(0, 5).map((tag, i) => (
                 <span
-                  key={index}
-                  className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700"
+                  key={i}
+                  className="text-[10px] font-bold px-1.5 py-0.5 rounded"
+                  style={{ background: 'rgba(127,29,29,0.5)', color: 'rgba(252,165,165,0.9)', border: '1px solid rgba(220,38,38,0.3)' }}
                 >
                   #{tag}
                 </span>
               ))}
-              {entry.tags.length > 4 && (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                  +{entry.tags.length - 4} more
-                </span>
+            </div>
+          )}
+
+          {/* Footer: date + style + actions */}
+          <div
+            className="px-3 py-2 flex items-center justify-between"
+            style={{ borderTop: '1px solid rgba(55,65,81,0.6)' }}
+          >
+            <div className="flex items-center gap-2" style={{ color: 'rgba(107,114,128,0.65)', fontSize: '10px' }}>
+              <span>📅 {formatDate(entry.createdAt)}</span>
+              <span>•</span>
+              <span className="capitalize">{entry.judgeStyle.replace(/-/g, ' ')}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              {onViewDetails && (
+                <button
+                  onClick={e => { e.stopPropagation(); onViewDetails(entry); }}
+                  className="text-[10px] font-bold uppercase tracking-wider transition-colors"
+                  style={{ color: 'rgba(249,115,22,0.8)' }}
+                >
+                  Details
+                </button>
+              )}
+              {showRemoveButton && onRemove && (
+                <button
+                  onClick={e => { e.stopPropagation(); onRemove(entry.id); }}
+                  disabled={isRemoving}
+                  className="text-[10px] font-bold uppercase tracking-wider transition-colors disabled:opacity-40"
+                  style={{ color: 'rgba(239,68,68,0.6)' }}
+                >
+                  {isRemoving ? '...' : '🗑 Remove'}
+                </button>
               )}
             </div>
           </div>
-        )}
-
-        {/* Judge style */}
-        <div className="mb-3">
-          <span className="text-xs text-gray-500">
-            Judge Style: <span className="font-medium capitalize">{entry.judgeStyle.replace('-', ' ')}</span>
-          </span>
         </div>
-
-        {/* Reaction preview */}
-        <div className="mb-4">
-          <div className="bg-gray-50 rounded-lg p-3 border-l-4 border-rage-500">
-            <p className="text-sm text-gray-700 italic font-chef">
-              "{truncateText(entry.reaction, 120)}"
-            </p>
-          </div>
-        </div>
-
-        {/* Action buttons */}
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-          <button
-            onClick={() => onViewDetails?.(entry)}
-            className="text-sm font-medium text-rage-600 hover:text-rage-700 underline"
-          >
-            View Full Details
-          </button>
-
-          {showRemoveButton && onRemove && (
-            <Button
-              variant="danger"
-              size="sm"
-              onClick={() => onRemove(entry.id)}
-              isLoading={isRemoving}
-              loadingText="Removing..."
-              className="ml-2"
-            >
-              Remove
-            </Button>
-          )}
-        </div>
-      </div>
+      )}
     </div>
   );
 }
