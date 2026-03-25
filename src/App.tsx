@@ -219,7 +219,7 @@ function App() {
       fallbackMessage="Something went wrong in the kitchen! Don't worry, your data is safe."
       showReload={true}
     >
-      <Router>
+      <Router basename={import.meta.env.BASE_URL}>
         <div className="min-h-screen flex flex-col" style={{ background: 'transparent' }}>
           <Navigation />
 
