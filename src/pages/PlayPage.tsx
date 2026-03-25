@@ -146,25 +146,62 @@ function PlayPage() {
       />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <ScoreAnimationWrapper score={judgeResponse?.rage_score || 0} className="text-center mb-8">
-          <div className="relative">
-            <h1 className="text-5xl font-extrabold font-chef text-hell-100 mb-4 drop-shadow-2xl">
-              <span className="flex items-center justify-center space-x-4">
-                <span className="animate-flame-flicker">🔥</span>
-                <span>HELL'S KITCHEN</span>
-                <span className="animate-flame-flicker">🔥</span>
-              </span>
+        {/* ── Page Masthead ── */}
+        <ScoreAnimationWrapper score={judgeResponse?.rage_score || 0} className="mb-10">
+          <div
+            className="relative text-center rounded-xl overflow-hidden"
+            style={{
+              background: 'linear-gradient(180deg, rgba(127,29,29,0.18) 0%, rgba(10,0,0,0.55) 100%)',
+              border: '1px solid rgba(220,38,38,0.3)',
+              boxShadow: '0 0 60px rgba(220,38,38,0.1) inset, 0 4px 40px rgba(0,0,0,0.5)',
+              padding: '40px 24px 32px',
+            }}
+          >
+            {/* Decorative corner flames */}
+            <span className="absolute top-3 left-4 text-2xl animate-flame-flicker opacity-50">🔥</span>
+            <span className="absolute top-3 right-4 text-2xl animate-flame-flicker opacity-50" style={{ animationDelay: '0.7s' }}>🔥</span>
+
+            {/* Title */}
+            <h1
+              className="font-chef font-black uppercase tracking-widest text-white mb-2"
+              style={{
+                fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+                textShadow: '0 0 30px rgba(220,38,38,0.9), 0 0 60px rgba(220,38,38,0.5)',
+                letterSpacing: '0.12em',
+              }}
+            >
+              Hell's Kitchen
             </h1>
-            <div className="text-2xl font-bold text-flame-300 mb-2 animate-burning-text">
-              FACE GORDON'S WRATH
-            </div>
-            <p className="text-lg text-steel-300 font-semibold">
-              Think your cooking is good? <span className="text-hell-400 animate-pulse">Gordon Ramsay WILL disagree...</span>
+
+            {/* Flame divider */}
+            <div
+              className="mx-auto mb-3"
+              style={{
+                height: '2px',
+                width: '180px',
+                background: 'linear-gradient(90deg, transparent, #dc2626, #f97316, #dc2626, transparent)',
+              }}
+            />
+
+            <p
+              className="font-black uppercase mb-1"
+              style={{
+                fontSize: 'clamp(0.75rem, 2vw, 1rem)',
+                letterSpacing: '0.35em',
+                color: '#f97316',
+                textShadow: '0 0 12px rgba(249,115,22,0.7)',
+              }}
+            >
+              Ragebait Simulator
+            </p>
+            <p style={{ color: 'rgba(156,163,175,0.7)', fontSize: '14px', marginTop: '8px' }}>
+              Submit your worst recipes &mdash;{' '}
+              <span style={{ color: 'rgba(239,68,68,0.85)', fontWeight: 700 }}>Gordon Ramsay WILL disagree</span>
             </p>
 
             {/* Player Level Display */}
             {player && getPlayerLevel() && (
-              <div className="mt-4 flex justify-center">
+              <div className="mt-5 flex justify-center">
                 <PlayerLevel
                   level={getPlayerLevel()!}
                   currentXP={player.totalXP}
@@ -178,7 +215,7 @@ function PlayPage() {
             {/* Level Up Celebration */}
             {showLevelUp && (
               <AchievementAnimationWrapper isNew={true} rarity="legendary" className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="hell-kitchen-bg border-4 border-flame-500 rounded-lg p-6 shadow-2xl animate-scale-in">
+                <div className="hell-kitchen-bg border-4 border-flame-500 rounded-lg p-6 shadow-2xl">
                   <div className="text-center">
                     <div className="text-6xl mb-2 animate-gordon-rage">🏆</div>
                     <div className="text-3xl font-bold text-flame-300 animate-burning-text">LEVEL UP!</div>
@@ -187,13 +224,6 @@ function PlayPage() {
                 </div>
               </AchievementAnimationWrapper>
             )}
-
-            {/* Decorative elements */}
-            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 flex space-x-8 opacity-70">
-              <span className="text-2xl animate-steam">💨</span>
-              <span className="text-2xl animate-sizzle delay-100">⚡</span>
-              <span className="text-2xl animate-steam delay-200">💨</span>
-            </div>
           </div>
         </ScoreAnimationWrapper>
 

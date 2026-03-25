@@ -22,35 +22,69 @@ function AboutPage() {
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero Section */}
-        <div className="text-center mb-12 animate-fade-in">
-          <div className="relative">
-            <h1 className="text-6xl font-extrabold font-chef text-hell-100 mb-6 drop-shadow-2xl">
-              <span className="flex items-center justify-center space-x-4">
-                <span className="animate-flame-flicker">🔥</span>
-                <span>HELL'S KITCHEN</span>
-                <span className="animate-flame-flicker">🔥</span>
-              </span>
-              <div className="text-3xl text-flame-300 mt-2 animate-burning-text">
-                CULINARY NIGHTMARE SIMULATOR
-              </div>
+        <div className="text-center mb-10 animate-fade-in">
+          <div
+            className="relative rounded-xl overflow-hidden mx-auto"
+            style={{
+              background: 'linear-gradient(180deg, rgba(127,29,29,0.18) 0%, rgba(10,0,0,0.55) 100%)',
+              border: '1px solid rgba(220,38,38,0.3)',
+              boxShadow: '0 0 60px rgba(220,38,38,0.1) inset, 0 4px 40px rgba(0,0,0,0.5)',
+              padding: '48px 32px 40px',
+            }}
+          >
+            {/* Corner flames */}
+            <span className="absolute top-4 left-5 text-2xl animate-flame-flicker opacity-40">🔥</span>
+            <span className="absolute top-4 right-5 text-2xl animate-flame-flicker opacity-40" style={{ animationDelay: '0.9s' }}>🔥</span>
+
+            <h1
+              className="font-chef font-black uppercase text-white mb-2"
+              style={{
+                fontSize: 'clamp(2.2rem, 6vw, 4rem)',
+                letterSpacing: '0.12em',
+                textShadow: '0 0 30px rgba(220,38,38,0.9), 0 0 60px rgba(220,38,38,0.5)',
+              }}
+            >
+              Hell's Kitchen
             </h1>
-            <p className="text-xl text-steel-200 max-w-4xl mx-auto leading-relaxed">
-              <span className="text-hell-400 font-bold animate-pulse">THE ULTIMATE CULINARY COMEDY GAME</span> where terrible recipes meet brutal AI judgment.<br />
-              Submit your most outrageous cooking disasters and watch <span className="text-flame-400 font-bold">Gordon Ramsay's AI avatar</span> lose his mind!
+
+            {/* Flame divider */}
+            <div
+              className="mx-auto mb-3"
+              style={{
+                height: '2px',
+                width: '200px',
+                background: 'linear-gradient(90deg, transparent, #dc2626, #f97316, #dc2626, transparent)',
+              }}
+            />
+
+            <p
+              className="font-black uppercase mb-4"
+              style={{
+                fontSize: 'clamp(0.7rem, 2vw, 0.9rem)',
+                letterSpacing: '0.38em',
+                color: '#f97316',
+                textShadow: '0 0 12px rgba(249,115,22,0.7)',
+              }}
+            >
+              Culinary Nightmare Simulator
             </p>
 
-            {/* Decorative elements */}
-            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 flex space-x-12 opacity-60">
-              <span className="text-4xl animate-steam">💨</span>
-              <span className="text-4xl animate-sizzle delay-100">⚡</span>
-              <span className="text-4xl animate-boil delay-200">💥</span>
-              <span className="text-4xl animate-steam delay-300">💨</span>
-            </div>
+            <p
+              className="max-w-2xl mx-auto leading-relaxed"
+              style={{ color: 'rgba(209,213,219,0.85)', fontSize: '15px' }}
+            >
+              <span style={{ color: 'rgba(239,68,68,0.9)', fontWeight: 700 }}>THE ULTIMATE CULINARY COMEDY GAME</span>
+              {' '}where terrible recipes meet brutal AI judgment.{' '}
+              Submit your cooking disasters and watch{' '}
+              <span style={{ color: '#fb923c', fontWeight: 700 }}>Gordon Ramsay's AI avatar</span> lose his mind.
+            </p>
 
-            <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-6 opacity-70">
-              <span className="text-2xl animate-ingredient-toss">🥄</span>
-              <span className="text-2xl animate-plate-smash delay-500">🍽️</span>
-              <span className="text-2xl animate-knife-fall delay-700">🔪</span>
+            {/* Decorative icons */}
+            <div className="flex justify-center gap-6 mt-5 opacity-60">
+              <span className="text-2xl animate-steam">💨</span>
+              <span className="text-2xl animate-sizzle" style={{ animationDelay: '0.2s' }}>⚡</span>
+              <span className="text-2xl animate-flame-flicker" style={{ animationDelay: '0.4s' }}>🔥</span>
+              <span className="text-2xl animate-steam" style={{ animationDelay: '0.6s' }}>💨</span>
             </div>
           </div>
         </div>
@@ -177,13 +211,13 @@ function AboutPage() {
                 <div className="grid md:grid-cols-2 gap-8 mb-8">
                   <div className="space-y-6">
                     <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 w-12 h-12 bg-rage-100 rounded-lg flex items-center justify-center">
+                      <div className="flex-shrink-0 w-12 h-12 bg-hell-800 rounded-lg flex items-center justify-center">
                         <span className="text-2xl">🧠</span>
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">AI Judge Personalities</h3>
-                        <p className="text-gray-600">Choose from 4 different Gordon Ramsay personalities:</p>
-                        <ul className="mt-2 space-y-1 text-sm text-gray-600">
+                        <h3 className="text-lg font-semibold text-white">AI Judge Personalities</h3>
+                        <p className="text-steel-300">Choose from 4 different Gordon Ramsay personalities:</p>
+                        <ul className="mt-2 space-y-1 text-sm text-steel-300">
                           <li><strong>Classic Rage:</strong> Explosive anger and dramatic reactions</li>
                           <li><strong>Dry Sarcasm:</strong> Cutting wit and sophisticated insults</li>
                           <li><strong>Disappointed:</strong> Sad disappointment instead of fury</li>
@@ -193,13 +227,13 @@ function AboutPage() {
                     </div>
 
                     <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <div className="flex-shrink-0 w-12 h-12 bg-kitchen-700 rounded-lg flex items-center justify-center">
                         <span className="text-2xl">🏆</span>
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">Smart Leaderboard</h3>
-                        <p className="text-gray-600">Local leaderboard with advanced features:</p>
-                        <ul className="mt-2 space-y-1 text-sm text-gray-600">
+                        <h3 className="text-lg font-semibold text-white">Smart Leaderboard</h3>
+                        <p className="text-steel-300">Local leaderboard with advanced features:</p>
+                        <ul className="mt-2 space-y-1 text-sm text-steel-300">
                           <li>• Sort by rage score or submission date</li>
                           <li>• Pagination for large collections</li>
                           <li>• Statistics and analytics</li>
@@ -210,13 +244,13 @@ function AboutPage() {
                     </div>
 
                     <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                      <div className="flex-shrink-0 w-12 h-12 bg-kitchen-700 rounded-lg flex items-center justify-center">
                         <span className="text-2xl">🔒</span>
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">BYOK Security</h3>
-                        <p className="text-gray-600">Bring Your Own Key approach ensures:</p>
-                        <ul className="mt-2 space-y-1 text-sm text-gray-600">
+                        <h3 className="text-lg font-semibold text-white">BYOK Security</h3>
+                        <p className="text-steel-300">Bring Your Own Key approach ensures:</p>
+                        <ul className="mt-2 space-y-1 text-sm text-steel-300">
                           <li>• Your API key never leaves your browser</li>
                           <li>• Direct communication with OpenAI only</li>
                           <li>• Session or persistent storage options</li>
@@ -228,13 +262,13 @@ function AboutPage() {
 
                   <div className="space-y-6">
                     <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <div className="flex-shrink-0 w-12 h-12 bg-kitchen-700 rounded-lg flex items-center justify-center">
                         <span className="text-2xl">⚡</span>
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">Smart Validation</h3>
-                        <p className="text-gray-600">Robust error handling and validation:</p>
-                        <ul className="mt-2 space-y-1 text-sm text-gray-600">
+                        <h3 className="text-lg font-semibold text-white">Smart Validation</h3>
+                        <p className="text-steel-300">Robust error handling and validation:</p>
+                        <ul className="mt-2 space-y-1 text-sm text-steel-300">
                           <li>• Automatic retry for failed AI responses</li>
                           <li>• JSON validation with error recovery</li>
                           <li>• Fallback responses for network issues</li>
@@ -244,13 +278,13 @@ function AboutPage() {
                     </div>
 
                     <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                      <div className="flex-shrink-0 w-12 h-12 bg-kitchen-700 rounded-lg flex items-center justify-center">
                         <span className="text-2xl">📱</span>
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">Responsive Design</h3>
-                        <p className="text-gray-600">Optimized for all devices:</p>
-                        <ul className="mt-2 space-y-1 text-sm text-gray-600">
+                        <h3 className="text-lg font-semibold text-white">Responsive Design</h3>
+                        <p className="text-steel-300">Optimized for all devices:</p>
+                        <ul className="mt-2 space-y-1 text-sm text-steel-300">
                           <li>• Mobile-first responsive layout</li>
                           <li>• Touch-friendly interactions</li>
                           <li>• Adaptive navigation and controls</li>
@@ -260,13 +294,13 @@ function AboutPage() {
                     </div>
 
                     <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                      <div className="flex-shrink-0 w-12 h-12 bg-hell-800 rounded-lg flex items-center justify-center">
                         <span className="text-2xl">🎭</span>
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">Entertainment Features</h3>
-                        <p className="text-gray-600">Built for maximum fun:</p>
-                        <ul className="mt-2 space-y-1 text-sm text-gray-600">
+                        <h3 className="text-lg font-semibold text-white">Entertainment Features</h3>
+                        <p className="text-steel-300">Built for maximum fun:</p>
+                        <ul className="mt-2 space-y-1 text-sm text-steel-300">
                           <li>• Animated rage score visualization</li>
                           <li>• Entertaining loading messages</li>
                           <li>• Tag-based categorization</li>
@@ -278,12 +312,12 @@ function AboutPage() {
                 </div>
               </section>
 
-              <section className="bg-gray-50 rounded-lg p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Technical Stack</h3>
+              <section className="bg-kitchen-800 rounded-lg p-6">
+                <h3 className="text-xl font-semibold text-white mb-4">Technical Stack</h3>
                 <div className="grid sm:grid-cols-3 gap-4">
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-2">Frontend</h4>
-                    <ul className="text-sm text-gray-600 space-y-1">
+                    <h4 className="font-medium text-white mb-2">Frontend</h4>
+                    <ul className="text-sm text-steel-300 space-y-1">
                       <li>• React 18 with TypeScript</li>
                       <li>• Vite for fast development</li>
                       <li>• Tailwind CSS for styling</li>
@@ -291,8 +325,8 @@ function AboutPage() {
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-2">AI Integration</h4>
-                    <ul className="text-sm text-gray-600 space-y-1">
+                    <h4 className="font-medium text-white mb-2">AI Integration</h4>
+                    <ul className="text-sm text-steel-300 space-y-1">
                       <li>• OpenAI GPT-4 API</li>
                       <li>• Client-side BYOK approach</li>
                       <li>• Structured JSON responses</li>
@@ -300,8 +334,8 @@ function AboutPage() {
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-2">Data Management</h4>
-                    <ul className="text-sm text-gray-600 space-y-1">
+                    <h4 className="font-medium text-white mb-2">Data Management</h4>
+                    <ul className="text-sm text-steel-300 space-y-1">
                       <li>• Zod for runtime validation</li>
                       <li>• localStorage for persistence</li>
                       <li>• UUID for unique identifiers</li>
@@ -316,7 +350,7 @@ function AboutPage() {
           {activeTab === 'faq' && (
             <div className="space-y-8">
               <section>
-                <h2 className="text-3xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+                <h2 className="text-3xl font-bold text-white mb-6">Frequently Asked Questions</h2>
 
                 <div className="space-y-6">
                   {[
@@ -361,20 +395,20 @@ function AboutPage() {
                       a: "This is a demonstration project, but feel free to fork the code on GitHub and add your own features!"
                     }
                   ].map((faq, index) => (
-                    <div key={index} className="bg-white border border-gray-200 rounded-lg p-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-3">{faq.q}</h3>
-                      <p className="text-gray-600">{faq.a}</p>
+                    <div key={index} className="bg-kitchen-800 border border-kitchen-600 rounded-lg p-6">
+                      <h3 className="text-lg font-semibold text-white mb-3">{faq.q}</h3>
+                      <p className="text-steel-300">{faq.a}</p>
                     </div>
                   ))}
                 </div>
               </section>
 
-              <section className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                <h3 className="text-xl font-semibold text-blue-900 mb-4">💡 Pro Tips for Maximum Rage</h3>
+              <section className="bg-kitchen-800 border border-blue-700/50 rounded-lg p-6">
+                <h3 className="text-xl font-semibold text-blue-300 mb-4">💡 Pro Tips for Maximum Rage</h3>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <h4 className="font-medium text-blue-800 mb-2">Recipe Ideas That Drive Gordon Mad:</h4>
-                    <ul className="text-blue-700 text-sm space-y-1">
+                    <h4 className="font-medium text-blue-400 mb-2">Recipe Ideas That Drive Gordon Mad:</h4>
+                    <ul className="text-blue-300 text-sm space-y-1">
                       <li>• Pineapple on pizza (but make it worse)</li>
                       <li>• Microwave "cooking" techniques</li>
                       <li>• Bizarre ingredient combinations</li>
@@ -383,8 +417,8 @@ function AboutPage() {
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-medium text-blue-800 mb-2">Writing Tips:</h4>
-                    <ul className="text-blue-700 text-sm space-y-1">
+                    <h4 className="font-medium text-blue-400 mb-2">Writing Tips:</h4>
+                    <ul className="text-blue-300 text-sm space-y-1">
                       <li>• Be specific about terrible techniques</li>
                       <li>• Mention questionable storage methods</li>
                       <li>• Include "creative" substitutions</li>
@@ -400,15 +434,15 @@ function AboutPage() {
           {activeTab === 'privacy' && (
             <div className="space-y-8">
               <section>
-                <h2 className="text-3xl font-bold text-gray-900 mb-6">Privacy & Safety</h2>
+                <h2 className="text-3xl font-bold text-white mb-6">Privacy & Safety</h2>
 
                 <div className="grid md:grid-cols-2 gap-8">
                   <div className="space-y-6">
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                      <h3 className="text-lg font-semibold text-green-800 mb-4 flex items-center">
+                    <div className="bg-kitchen-800 border border-green-700/50 rounded-lg p-6">
+                      <h3 className="text-lg font-semibold text-green-400 mb-4 flex items-center">
                         🔒 Your Data Security
                       </h3>
-                      <ul className="text-green-700 space-y-2 text-sm">
+                      <ul className="text-green-300 space-y-2 text-sm">
                         <li><strong>No Server Storage:</strong> Everything runs in your browser</li>
                         <li><strong>API Key Security:</strong> Never transmitted except to OpenAI</li>
                         <li><strong>Local Data Only:</strong> Recipes and scores stay on your device</li>
@@ -417,11 +451,11 @@ function AboutPage() {
                       </ul>
                     </div>
 
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                      <h3 className="text-lg font-semibold text-blue-800 mb-4 flex items-center">
+                    <div className="bg-kitchen-800 border border-blue-700/50 rounded-lg p-6">
+                      <h3 className="text-lg font-semibold text-blue-400 mb-4 flex items-center">
                         🛡️ Content Safety
                       </h3>
-                      <ul className="text-blue-700 space-y-2 text-sm">
+                      <ul className="text-blue-300 space-y-2 text-sm">
                         <li><strong>Family-Friendly:</strong> AI responses are filtered for appropriate content</li>
                         <li><strong>Food-Only Insults:</strong> Critiques focus only on cooking, not personal attacks</li>
                         <li><strong>No Hate Speech:</strong> Harmful content is automatically filtered</li>
@@ -432,11 +466,11 @@ function AboutPage() {
                   </div>
 
                   <div className="space-y-6">
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-                      <h3 className="text-lg font-semibold text-yellow-800 mb-4 flex items-center">
+                    <div className="bg-kitchen-800 border border-yellow-700/50 rounded-lg p-6">
+                      <h3 className="text-lg font-semibold text-yellow-400 mb-4 flex items-center">
                         ⚠️ Important Disclaimers
                       </h3>
-                      <ul className="text-yellow-700 space-y-2 text-sm">
+                      <ul className="text-yellow-300 space-y-2 text-sm">
                         <li><strong>Entertainment Only:</strong> This is a comedy game, not real cooking advice</li>
                         <li><strong>AI Limitations:</strong> Responses may be unpredictable or sometimes nonsensical</li>
                         <li><strong>Not Real Gordon:</strong> This is an AI simulation, not the actual chef</li>
@@ -445,11 +479,11 @@ function AboutPage() {
                       </ul>
                     </div>
 
-                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
-                      <h3 className="text-lg font-semibold text-purple-800 mb-4 flex items-center">
+                    <div className="bg-kitchen-800 border border-purple-700/50 rounded-lg p-6">
+                      <h3 className="text-lg font-semibold text-purple-400 mb-4 flex items-center">
                         🔧 Technical Security
                       </h3>
-                      <ul className="text-purple-700 space-y-2 text-sm">
+                      <ul className="text-purple-300 space-y-2 text-sm">
                         <li><strong>HTTPS Only:</strong> All connections are encrypted</li>
                         <li><strong>XSS Protection:</strong> Input sanitization prevents code injection</li>
                         <li><strong>No Dangerous HTML:</strong> User content is safely displayed</li>
@@ -461,26 +495,26 @@ function AboutPage() {
                 </div>
               </section>
 
-              <section className="bg-gray-50 rounded-lg p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">How We Protect You</h3>
+              <section className="bg-kitchen-800 rounded-lg p-6">
+                <h3 className="text-xl font-semibold text-white mb-4">How We Protect You</h3>
                 <div className="grid sm:grid-cols-3 gap-6">
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-2">🔐 API Key Safety</h4>
-                    <p className="text-sm text-gray-600">
+                    <h4 className="font-medium text-white mb-2">🔐 API Key Safety</h4>
+                    <p className="text-sm text-steel-300">
                       Your OpenAI API key is encrypted in browser storage and only sent directly to OpenAI's servers.
                       We never see, log, or store your key on any server.
                     </p>
                   </div>
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-2">🧹 Data Validation</h4>
-                    <p className="text-sm text-gray-600">
+                    <h4 className="font-medium text-white mb-2">🧹 Data Validation</h4>
+                    <p className="text-sm text-steel-300">
                       All user inputs and AI responses are validated and sanitized. Invalid or corrupted data is
                       automatically cleaned up to prevent issues.
                     </p>
                   </div>
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-2">🛡️ Safe Responses</h4>
-                    <p className="text-sm text-gray-600">
+                    <h4 className="font-medium text-white mb-2">🛡️ Safe Responses</h4>
+                    <p className="text-sm text-steel-300">
                       The AI is programmed with strict safety guidelines and fallback responses to ensure
                       all content remains appropriate and focused on food critique.
                     </p>
@@ -489,17 +523,17 @@ function AboutPage() {
               </section>
 
               <section className="border-t border-gray-200 pt-8">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Questions About Privacy?</h3>
-                <p className="text-gray-600 mb-4">
+                <h3 className="text-xl font-semibold text-white mb-4">Questions About Privacy?</h3>
+                <p className="text-steel-300 mb-4">
                   This is an open-source demonstration project. You can review the entire codebase to see exactly
                   how your data is handled. There are no hidden tracking scripts or data collection mechanisms.
                 </p>
                 <div className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-500">Built with transparency in mind</span>
-                  <span className="text-sm text-gray-500">•</span>
-                  <span className="text-sm text-gray-500">No servers, no databases, no tracking</span>
-                  <span className="text-sm text-gray-500">•</span>
-                  <span className="text-sm text-gray-500">Your privacy is our priority</span>
+                  <span className="text-sm text-steel-400">Built with transparency in mind</span>
+                  <span className="text-sm text-steel-400">•</span>
+                  <span className="text-sm text-steel-400">No servers, no databases, no tracking</span>
+                  <span className="text-sm text-steel-400">•</span>
+                  <span className="text-sm text-steel-400">Your privacy is our priority</span>
                 </div>
               </section>
             </div>
