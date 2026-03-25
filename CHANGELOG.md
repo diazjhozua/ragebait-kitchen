@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.0.0...v1.0.1) (2026-03-25)
+
+
+### Bug Fixes
+
+* configure router basename for subpath deployment ([4e3f417](https://github.com/diazjhozua/ragebait-kitchen/commit/4e3f417c66f258cf1de5464f051f74f67a8234ac))
+
 # 1.0.0 (2026-03-25)
 
 
