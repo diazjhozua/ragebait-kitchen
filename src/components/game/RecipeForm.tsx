@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { Recipe, JudgeStyle, JudgeResponse } from '../../types/game';
 import { useApiKey } from '../../hooks/useApiKey';
 import { useOpenAI } from '../../hooks/useOpenAI';
@@ -16,6 +16,14 @@ interface RecipeFormProps {
 export default function RecipeForm({ onJudgeComplete, resetKey, className = '' }: RecipeFormProps) {
   const { isValid: hasValidApiKey } = useApiKey();
   const { judgeRecipe, isLoading, response, error, reset } = useOpenAI();
+
+  // Keep a ref to the latest onJudgeComplete so the notify effect never
+  // re-fires simply because the parent re-rendered and produced a new
+  // function reference (which would call handleJudgeComplete multiple times).
+  const onJudgeCompleteRef = useRef(onJudgeComplete);
+  useEffect(() => {
+    onJudgeCompleteRef.current = onJudgeComplete;
+  });
 
   // Form state
   const [playerName, setPlayerName] = useState(() => {
@@ -79,12 +87,16 @@ export default function RecipeForm({ onJudgeComplete, resetKey, className = '' }
     }
   }, [resetKey, reset]);
 
-  // Notify parent when judgment is complete
+  // Notify parent when judgment is complete.
+  // onJudgeComplete is intentionally excluded from deps — we read it via ref
+  // so this effect only fires when the response data itself changes, not
+  // every time the parent re-renders and passes a new function reference.
   useEffect(() => {
-    if (response && onJudgeComplete && submittedRecipe && submittedPlayerName) {
-      onJudgeComplete(response, submittedRecipe, submittedPlayerName, submittedJudgeStyle);
+    if (response && submittedRecipe && submittedPlayerName) {
+      onJudgeCompleteRef.current?.(response, submittedRecipe, submittedPlayerName, submittedJudgeStyle);
     }
-  }, [response, onJudgeComplete, submittedRecipe, submittedPlayerName, submittedJudgeStyle]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response, submittedRecipe, submittedPlayerName, submittedJudgeStyle]);
 
   const validateForm = () => {
     const newErrors: typeof errors = {};
