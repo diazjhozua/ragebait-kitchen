@@ -12,13 +12,19 @@ CRITICAL SAFETY RULES (MUST FOLLOW):
 
 // ── Scoring rubric injected into every prompt ─────────────────────────────
 const SCORING_RUBRIC = `
+RELEVANCE CHECK — evaluate this FIRST before scoring:
+- Is the submission actually a recipe or cooking-related content? (ingredients, techniques, steps, food items)
+- If it is gibberish, random words, lorem ipsum, a joke with no food context, or clearly not a recipe → score 0-5 and note it is not a real recipe
+- If it mentions food/cooking but has no real effort or creativity (e.g. just "pasta") → score 5-15 max
+- A submission earns a higher score ONLY if it shows creative effort in constructing something genuinely terrible in a cooking context
+
 SCORING RUBRIC — apply strictly and consistently:
-90-100 : Food safety violation OR genuinely inedible (raw chicken in a smoothie, rotten ingredients, fish left out overnight, mixing bleach-level stupidity)
+90-100 : Food safety violation OR genuinely inedible (raw chicken in a smoothie, rotten ingredients, fish left out overnight)
 70-89  : Major technique disaster — severely burned, nauseating flavor combo (ketchup cheesecake, mayo ice cream), zero culinary logic
-50-69  : Clearly bad but survivable — wrong ratios, ingredient substitutions that don't work, lazy shortcuts that ruin the dish
-30-49  : Mediocre — one or two real flaws, otherwise just uninspired and joyless cooking
+50-69  : Clearly bad but survivable — wrong ratios, ingredient substitutions that don't work, lazy shortcuts
+30-49  : Mediocre — one or two real flaws, otherwise uninspired cooking
 10-29  : Passable with minor issues — edible, not exciting
-0-9    : Actually decent — reserve ONLY for genuinely competent recipes
+0-9    : Actually decent OR not a real recipe / irrelevant content
 `;
 
 // ── Tag guidance injected into every prompt ────────────────────────────────
@@ -27,6 +33,16 @@ TAGS: Generate 3-5 tags in lowercase-hyphenated format.
 Make them SPECIFIC and SHARP — reference the actual flaw in this specific recipe.
 GOOD examples: "raw-inside", "microwave-abuse", "flavor-crime", "structural-collapse", "suspicious-protein", "dairy-disaster", "heat-management-failure"
 BAD examples: "bad", "terrible", "disgusting" — too generic, rejected
+`;
+
+// ── Non-recipe handling (injected into every prompt) ──────────────────────
+const NON_RECIPE_RULE = `
+NON-RECIPE HANDLING:
+If the submission is not recognisably a recipe or cooking attempt (gibberish, random words, off-topic text, single words with no cooking context):
+- Set rage_score to 1-5
+- tags: ["not-a-recipe", "wasted-my-time"]
+- reaction: a brief, dismissive in-character line — no dramatic rant, Gordon does not waste energy on non-food content
+- Do NOT reward lazy or irrelevant submissions with a high score or an entertaining long reaction
 `;
 
 // ── Output format ──────────────────────────────────────────────────────────
@@ -99,6 +115,7 @@ export function buildJudgePrompt(
 
   return `${BASE_SAFETY_RULES}
 ${SCORING_RUBRIC}
+${NON_RECIPE_RULE}
 ${TAG_RULES}
 ${stylePrompt}
 ${OUTPUT_FORMAT}
