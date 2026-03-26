@@ -1,3 +1,17 @@
+# [1.2.0](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.1.0...v1.2.0) (2026-03-26)
+
+
+### Bug Fixes
+
+* prevent redundant judgment notifications on parent re-renders ([05c864b](https://github.com/diazjhozua/ragebait-kitchen/commit/05c864baf543aea623807258cc6736020a694a7b))
+
+
+### Features
+
+* implement relevance filtering for non-recipe submissions ([64cd074](https://github.com/diazjhozua/ragebait-kitchen/commit/64cd074052f6e96b49aa5d924895c71758f78a14))
+* refine AI judge prompts with strict rubrics and personality biases ([989e2c3](https://github.com/diazjhozua/ragebait-kitchen/commit/989e2c3ded9fd5b5c940f1e7fa95edc246345ac8))
+* upgrade to gpt-4o and adjust AI judge temperature ([1e6a4f5](https://github.com/diazjhozua/ragebait-kitchen/commit/1e6a4f5900629356b4b5a15b18c2a3104633e5a7))
+
 # [1.1.0](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.0.1...v1.1.0) (2026-03-25)
 
 
