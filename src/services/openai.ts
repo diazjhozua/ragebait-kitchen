@@ -116,11 +116,11 @@ export class OpenAIService {
     }
 
     const completion = await this.openai.chat.completions.create({
-      model: 'gpt-4', // Using GPT-4 for better JSON consistency
+      model: 'gpt-4o',
       messages,
-      temperature: 0.8, // Some creativity but not too wild
-      max_tokens: 500,   // Reasonable limit for judge responses
-      response_format: { type: 'json_object' } // Force JSON response
+      temperature: 0.9,
+      max_tokens: 500,
+      response_format: { type: 'json_object' }
     });
 
     const content = completion.choices[0]?.message?.content;

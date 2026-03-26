@@ -69,7 +69,7 @@ export const API_CONFIG = {
   MAX_RETRIES: 2,
   RETRY_DELAY: 1000,
   REQUEST_TIMEOUT: 30000,
-  OPENAI_MODEL: 'gpt-4'
+  OPENAI_MODEL: 'gpt-4o'
 } as const;
 
 // Error messages
