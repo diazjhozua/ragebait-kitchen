@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { AppConfig } from '../types/config';
 import { useAppConfig } from '../hooks/useAppConfig';
 import { CONFIG_DEFAULTS, CONFIG_LIMITS } from '../utils/constants';
@@ -47,6 +48,25 @@ const hintStyle: React.CSSProperties = {
   marginTop: '4px',
 };
 
+// ── Back link shown inside the gate modal ─────────────────────────────────
+
+function BackLink({ onCancel }: { onCancel: () => void }) {
+  return (
+    <div className="text-center mt-4">
+      <button
+        type="button"
+        onClick={onCancel}
+        className="text-xs font-bold uppercase tracking-wider transition-colors"
+        style={{ color: 'rgba(107,114,128,0.55)' }}
+        onMouseEnter={e => (e.currentTarget.style.color = 'rgba(249,115,22,0.7)')}
+        onMouseLeave={e => (e.currentTarget.style.color = 'rgba(107,114,128,0.55)')}
+      >
+        ← Back to game
+      </button>
+    </div>
+  );
+}
+
 // ── Passcode gate modal ────────────────────────────────────────────────────
 
 function PasscodeGate({
@@ -56,6 +76,7 @@ function PasscodeGate({
   lockoutRemainingMs,
   onVerify,
   onSetup,
+  onCancel,
   clearError,
 }: {
   gateStatus: ReturnType<typeof useAppConfig>['gateStatus'];
@@ -64,6 +85,7 @@ function PasscodeGate({
   lockoutRemainingMs: number;
   onVerify: (p: string) => Promise<boolean>;
   onSetup: (p: string) => Promise<{ backupCode: string }>;
+  onCancel: () => void;
   clearError: () => void;
 }) {
   const [input, setInput] = useState('');
@@ -110,11 +132,12 @@ function PasscodeGate({
             Please wait before trying again.
           </p>
           <div
-            className="font-black text-5xl tabular-nums"
+            className="font-black text-5xl tabular-nums mb-6"
             style={{ color: '#f97316', textShadow: '0 0 20px rgba(249,115,22,0.6)' }}
           >
             {lockoutSec}s
           </div>
+          <BackLink onCancel={onCancel} />
         </div>
       )}
 
@@ -232,6 +255,7 @@ function PasscodeGate({
             >
               {isLoading ? 'Setting up...' : '🔒 Set Passcode'}
             </button>
+            <BackLink onCancel={onCancel} />
           </div>
         </form>
       )}
@@ -300,6 +324,7 @@ function PasscodeGate({
             >
               {isLoading ? 'Verifying...' : '🔓 Unlock Settings'}
             </button>
+            <BackLink onCancel={onCancel} />
           </div>
         </form>
       )}
@@ -360,6 +385,8 @@ function SliderField({
 // ── SettingsPage ───────────────────────────────────────────────────────────
 
 export default function SettingsPage() {
+  const navigate = useNavigate();
+
   const {
     config,
     isLoading,
@@ -482,9 +509,9 @@ export default function SettingsPage() {
       {/* Passcode gate modal */}
       <Modal
         isOpen={gateStatus !== 'unlocked'}
-        onClose={() => {}}
-        closeOnOverlayClick={false}
-        closeOnEscape={false}
+        onClose={() => navigate(-1)}
+        closeOnOverlayClick={true}
+        closeOnEscape={true}
         showCloseButton={false}
         size="sm"
         contentClassName="rounded-xl overflow-hidden"
@@ -499,6 +526,7 @@ export default function SettingsPage() {
             lockoutRemainingMs={lockoutRemainingMs}
             onVerify={handleVerify}
             onSetup={handleSetup}
+            onCancel={() => navigate(-1)}
             clearError={clearError}
           />
         </div>
