@@ -108,10 +108,18 @@ Example: "The fundamental failure here is [specific technique issue]. Compounded
 export function buildJudgePrompt(
   judgeStyle: JudgeStyle,
   playerName: string,
-  recipe: { title?: string; content: string }
+  recipe: { title?: string; content: string },
+  customInstruction?: string
 ): string {
   const stylePrompt = JUDGE_STYLE_PROMPTS[judgeStyle];
   const recipeTitle = recipe.title ? `"${recipe.title}"` : 'Untitled Recipe';
+
+  // Append operator-provided custom instruction after the output format rules.
+  // Labeled "operator-provided" so the model treats it as configuration, not
+  // user input — this preserves the injection-resistance of the safety rules above.
+  const customBlock = customInstruction?.trim()
+    ? `\nCUSTOM JUDGE INSTRUCTION (operator-provided, apply in addition to all rules above):\n${customInstruction.trim()}\n`
+    : '';
 
   return `${BASE_SAFETY_RULES}
 ${SCORING_RUBRIC}
@@ -119,7 +127,7 @@ ${NON_RECIPE_RULE}
 ${TAG_RULES}
 ${stylePrompt}
 ${OUTPUT_FORMAT}
-
+${customBlock}
 RECIPE TO JUDGE:
 Title: ${recipeTitle}
 Submitted by: ${playerName}

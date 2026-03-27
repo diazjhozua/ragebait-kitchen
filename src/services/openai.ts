@@ -4,6 +4,7 @@ import { validateWithSchema, judgeResponseSchema } from '../utils/validation';
 import { buildJudgePrompt, RETRY_PROMPT, FALLBACK_RESPONSES } from '../utils/prompts';
 import { findMaxSimilarity, applySimilarityPenalty } from '../utils/textSimilarity';
 import { StorageService } from './storage';
+import { ConfigService } from './configStorage';
 
 const MAX_RETRIES = 2;
 const RETRY_DELAY = 1000; // 1 second
@@ -48,7 +49,13 @@ export class OpenAIService {
       throw this.createApiError('API key not set', 'invalid-key', false);
     }
 
-    const prompt = buildJudgePrompt(request.judgeStyle, request.playerName, request.recipe);
+    const config = ConfigService.loadConfig();
+    const prompt = buildJudgePrompt(
+      request.judgeStyle,
+      request.playerName,
+      request.recipe,
+      config.customInstruction
+    );
 
     let lastError: Error | null = null;
 
@@ -115,13 +122,21 @@ export class OpenAIService {
       messages.push({ role: 'user', content: RETRY_PROMPT });
     }
 
-    const completion = await this.openai.chat.completions.create({
-      model: 'gpt-4o',
+    const cfg = ConfigService.loadConfig();
+
+    const createParams: OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming = {
+      model: cfg.model,
       messages,
-      temperature: 0.9,
-      max_tokens: 500,
+      temperature: cfg.temperature,
+      max_tokens: cfg.maxTokens,
       response_format: { type: 'json_object' }
-    });
+    };
+
+    if (cfg.topP !== undefined) {
+      createParams.top_p = cfg.topP;
+    }
+
+    const completion = await this.openai.chat.completions.create(createParams);
 
     const content = completion.choices[0]?.message?.content;
     if (!content) {
