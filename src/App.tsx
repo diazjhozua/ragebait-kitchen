@@ -6,6 +6,7 @@ import LoadingSpinner from './components/common/LoadingSpinner'
 // Lazy load pages for better performance
 const PlayPage = lazy(() => import('./pages/PlayPage'))
 const AboutPage = lazy(() => import('./pages/AboutPage'))
+const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 
 // Navigation component with active state
 function Navigation() {
@@ -19,6 +20,7 @@ function Navigation() {
   const navLinks = [
     { to: '/', label: 'Play', icon: '🎮', path: '/' },
     { to: '/about', label: 'About', icon: '⚔️', path: '/about' },
+    { to: '/settings', label: 'Settings', icon: '⚙️', path: '/settings' },
   ]
 
   return (
@@ -245,6 +247,17 @@ function App() {
                       fallbackMessage="Something went wrong loading the about page."
                     >
                       <AboutPage />
+                    </ErrorBoundary>
+                  }
+                />
+                <Route
+                  path="/settings"
+                  element={
+                    <ErrorBoundary
+                      fallbackTitle="Settings Error"
+                      fallbackMessage="Something went wrong loading the settings page."
+                    >
+                      <SettingsPage />
                     </ErrorBoundary>
                   }
                 />

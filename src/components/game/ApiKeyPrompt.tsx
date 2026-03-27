@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useApiKey } from '../../hooks/useApiKey';
 
 interface ApiKeyPromptProps {
@@ -81,6 +82,14 @@ export default function ApiKeyPrompt({ onKeySet, className = '' }: ApiKeyPromptP
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
+          <Link
+            to="/settings"
+            title="AI Settings"
+            className="text-xs font-bold uppercase tracking-wider transition-colors"
+            style={{ color: 'rgba(52,211,153,0.5)' }}
+          >
+            ⚙
+          </Link>
           <button
             onClick={() => setShowKey(!showKey)}
             className="text-xs font-bold uppercase tracking-wider transition-colors"
