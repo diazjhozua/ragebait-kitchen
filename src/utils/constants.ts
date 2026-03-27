@@ -47,7 +47,36 @@ export const STORAGE_KEYS = {
   API_KEY: 'ragebait-openai-key',
   LEADERBOARD: 'ragebait-leaderboard',
   PLAYER_NAME: 'ragebait-player-name',
-  SETTINGS: 'ragebait-settings'
+  SETTINGS: 'ragebait-settings',
+  PASSCODE: 'ragebait-passcode'
+} as const;
+
+// Config defaults (used by ConfigService and SettingsPage)
+export const CONFIG_DEFAULTS = {
+  MODEL: 'gpt-4o',
+  TEMPERATURE: 0.9,
+  MAX_TOKENS: 500,
+  TOP_P: undefined as number | undefined,
+  CUSTOM_INSTRUCTION: '',
+  VERSION: 1
+} as const;
+
+// Config field limits and passcode rules
+export const CONFIG_LIMITS = {
+  TEMPERATURE_MIN: 0,
+  TEMPERATURE_MAX: 2,
+  TEMPERATURE_STEP: 0.1,
+  MAX_TOKENS_MIN: 100,
+  MAX_TOKENS_MAX: 2000,
+  MAX_TOKENS_STEP: 50,
+  TOP_P_MIN: 0,
+  TOP_P_MAX: 1,
+  TOP_P_STEP: 0.05,
+  CUSTOM_INSTRUCTION_MAX: 500,
+  PASSCODE_MAX_ATTEMPTS: 5,
+  PASSCODE_LOCKOUT_MS: 30_000,
+  BACKUP_CODE_LENGTH: 8,
+  SCHEMA_VERSION: 1
 } as const;
 
 // Validation limits
