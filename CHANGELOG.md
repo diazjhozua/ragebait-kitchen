@@ -1,3 +1,14 @@
+# [1.3.0](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.2.0...v1.3.0) (2026-03-27)
+
+
+### Features
+
+* add navigation back to game from settings passcode gate ([cdabde1](https://github.com/diazjhozua/ragebait-kitchen/commit/cdabde10f90dfd13d674e827d1856019f89431d5))
+* implement configuration storage and passcode protection ([c78d521](https://github.com/diazjhozua/ragebait-kitchen/commit/c78d5216a60c016b978daa65dc2695df6b611d99))
+* implement settings page for AI configuration and security ([08b87f3](https://github.com/diazjhozua/ragebait-kitchen/commit/08b87f34beb713351379cd1c7c4552747187b46f))
+* integrate app configuration with AI service and passcode logic ([0005c5c](https://github.com/diazjhozua/ragebait-kitchen/commit/0005c5c3633029f110f158c8755a33c663c528e7))
+* integrate settings page into application navigation ([9d5f417](https://github.com/diazjhozua/ragebait-kitchen/commit/9d5f4173cf06fa80767ee87c641b7479a13d0a56))
+
 # [1.2.0](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.1.0...v1.2.0) (2026-03-26)
 
 
