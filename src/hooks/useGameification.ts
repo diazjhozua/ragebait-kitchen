@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type {
   PlayerGamification,
+  ChefGamificationMap,
   AchievementNotification,
   GamificationEvent,
   Ingredient
@@ -10,6 +11,7 @@ import type { LeaderboardEntry } from '../types/leaderboard';
 
 import { AchievementService, ACHIEVEMENTS } from '../services/achievements';
 import { ProgressionService, PLAYER_LEVELS } from '../services/progression';
+import { STORAGE_KEYS } from '../utils/constants';
 
 const GAMIFICATION_STORAGE_KEY = 'ragebait-gamification';
 const GAMIFICATION_EVENTS_KEY = 'ragebait-gamification-events';
@@ -35,6 +37,7 @@ interface GameificationState {
 
 interface GameificationActions {
   initializePlayer: (playerName: string) => void;
+  loadChef: (playerName: string) => void;
   processRecipeSubmission: (
     recipe: Recipe,
     response: JudgeResponse,
@@ -46,7 +49,40 @@ interface GameificationActions {
   getPlayerLevel: () => typeof PLAYER_LEVELS[0] | null;
   getUnlockedIngredients: () => Ingredient[];
   getProgress: () => { percentage: number; xpToNext: number; nextLevel: typeof PLAYER_LEVELS[0] | null };
+  getAllChefProfiles: () => { name: string; profile: PlayerGamification }[];
   resetPlayerData: () => void;
+}
+
+// Reads the full map from localStorage, migrating old single-profile format if needed
+function readChefMap(): ChefGamificationMap {
+  try {
+    const stored = localStorage.getItem(GAMIFICATION_STORAGE_KEY);
+    if (!stored) return {};
+
+    const parsed = JSON.parse(stored);
+
+    // Detect old format: root object has 'level' key (flat PlayerGamification)
+    if (typeof parsed.level === 'number') {
+      const chefName = localStorage.getItem(STORAGE_KEYS.PLAYER_NAME) || 'Unknown Chef';
+      const migrated: ChefGamificationMap = {
+        [chefName]: { ...parsed, name: chefName }
+      };
+      localStorage.setItem(GAMIFICATION_STORAGE_KEY, JSON.stringify(migrated));
+      return migrated;
+    }
+
+    return parsed as ChefGamificationMap;
+  } catch {
+    return {};
+  }
+}
+
+function writeChefMap(map: ChefGamificationMap) {
+  try {
+    localStorage.setItem(GAMIFICATION_STORAGE_KEY, JSON.stringify(map));
+  } catch (error) {
+    console.error('Failed to save gamification data:', error);
+  }
 }
 
 export function useGameification(): GameificationState & GameificationActions {
@@ -58,50 +94,22 @@ export function useGameification(): GameificationState & GameificationActions {
     error: null
   });
 
-  // Load player data on mount
+  // Load events and attempt to restore the last active chef on mount
   useEffect(() => {
-    loadPlayerData();
-  }, []);
-
-  const loadPlayerData = useCallback(() => {
     try {
-      setState(prev => ({ ...prev, isLoading: true, error: null }));
-
-      const stored = localStorage.getItem(GAMIFICATION_STORAGE_KEY);
       const eventsStored = localStorage.getItem(GAMIFICATION_EVENTS_KEY);
+      const events: GamificationEvent[] = eventsStored
+        ? JSON.parse(eventsStored).slice(-50)
+        : [];
 
-      let player: PlayerGamification | null = null;
-      let events: GamificationEvent[] = [];
+      const map = readChefMap();
+      const savedName = localStorage.getItem(STORAGE_KEYS.PLAYER_NAME);
+      const player = savedName && map[savedName] ? map[savedName] : null;
 
-      if (stored) {
-        player = JSON.parse(stored);
-      }
-
-      if (eventsStored) {
-        events = JSON.parse(eventsStored).slice(-50); // Keep last 50 events
-      }
-
-      setState(prev => ({
-        ...prev,
-        player,
-        recentEvents: events,
-        isLoading: false
-      }));
+      setState(prev => ({ ...prev, player, recentEvents: events, isLoading: false }));
     } catch (error) {
       console.error('Failed to load gamification data:', error);
-      setState(prev => ({
-        ...prev,
-        error: 'Failed to load player data',
-        isLoading: false
-      }));
-    }
-  }, []);
-
-  const savePlayerData = useCallback((player: PlayerGamification) => {
-    try {
-      localStorage.setItem(GAMIFICATION_STORAGE_KEY, JSON.stringify(player));
-    } catch (error) {
-      console.error('Failed to save gamification data:', error);
+      setState(prev => ({ ...prev, error: 'Failed to load player data', isLoading: false }));
     }
   }, []);
 
@@ -115,25 +123,48 @@ export function useGameification(): GameificationState & GameificationActions {
 
   const addEvent = useCallback((event: GamificationEvent) => {
     setState(prev => {
-      const newEvents = [...prev.recentEvents, event].slice(-50); // Keep last 50
+      const newEvents = [...prev.recentEvents, event].slice(-50);
       saveEvents(newEvents);
       return { ...prev, recentEvents: newEvents };
     });
   }, [saveEvents]);
 
+  // Saves a single chef's profile into the map without touching other chefs
+  const savePlayerData = useCallback((player: PlayerGamification) => {
+    const map = readChefMap();
+    map[player.name] = player;
+    writeChefMap(map);
+  }, []);
+
+  // Loads an existing chef profile (or creates a fresh one) and sets it as active
+  const loadChef = useCallback((playerName: string) => {
+    const map = readChefMap();
+    const existing = map[playerName];
+    const player = existing ?? ProgressionService.initializePlayer(playerName);
+
+    if (!existing) {
+      map[playerName] = player;
+      writeChefMap(map);
+    }
+
+    setState(prev => ({ ...prev, player }));
+  }, []);
+
+  // Creates a brand-new profile for the chef, overwriting any existing one
   const initializePlayer = useCallback((playerName: string) => {
     const player = ProgressionService.initializePlayer(playerName);
+    const map = readChefMap();
+    map[playerName] = player;
+    writeChefMap(map);
     setState(prev => ({ ...prev, player }));
-    savePlayerData(player);
 
-    // Add initialization event
     addEvent({
       type: 'xp_gained',
       amount: 0,
       source: 'Player initialized',
       timestamp: new Date().toISOString()
     });
-  }, [savePlayerData, addEvent]);
+  }, [addEvent]);
 
   const processRecipeSubmission = useCallback(async (
     recipe: Recipe,
@@ -142,50 +173,54 @@ export function useGameification(): GameificationState & GameificationActions {
     judgeStyle: JudgeStyle,
     leaderboardEntries: LeaderboardEntry[]
   ): Promise<AchievementNotification[]> => {
-    if (!state.player) {
-      initializePlayer(playerName);
+    // If active chef differs from the submitting chef, load the right profile first
+    const map = readChefMap();
+    const activePlayer = map[playerName] ?? ProgressionService.initializePlayer(playerName);
+
+    if (!map[playerName]) {
+      map[playerName] = activePlayer;
+      writeChefMap(map);
+      setState(prev => ({ ...prev, player: activePlayer }));
       return [];
     }
 
     try {
-      // Check for new achievements
       const newAchievements = await AchievementService.checkAchievements(
         recipe,
         response,
         playerName,
         judgeStyle,
-        state.player,
+        activePlayer,
         leaderboardEntries
       );
 
-      // Calculate XP
       const xpGained = ProgressionService.calculateXP(
         recipe,
         response,
         judgeStyle,
-        state.player.level,
+        activePlayer.level,
         newAchievements.length > 0
       );
 
-      // Update player progression
       const progressionResult = ProgressionService.updatePlayerGamification(
-        state.player,
+        activePlayer,
         recipe,
         response,
         judgeStyle,
         xpGained
       );
 
-      // Add unlocked achievements to player
-      const updatedPlayer = {
+      const updatedPlayer: PlayerGamification = {
         ...progressionResult.updatedPlayer,
+        name: playerName,
         unlockedAchievements: [
           ...progressionResult.updatedPlayer.unlockedAchievements,
           ...newAchievements.map(a => a.id)
         ],
         statistics: {
           ...progressionResult.updatedPlayer.statistics,
-          achievementsUnlocked: progressionResult.updatedPlayer.statistics.achievementsUnlocked + newAchievements.length
+          achievementsUnlocked:
+            progressionResult.updatedPlayer.statistics.achievementsUnlocked + newAchievements.length
         }
       };
 
@@ -195,21 +230,16 @@ export function useGameification(): GameificationState & GameificationActions {
         if (achievement.reward.ingredient) {
           const ingredient = INGREDIENTS.find(i => i.id === achievement.reward.ingredient);
           if (ingredient && !updatedPlayer.unlockedIngredients.includes(ingredient.id)) {
-            newIngredients.push({
-              ...ingredient,
-              unlockedAt: new Date().toISOString()
-            });
+            newIngredients.push({ ...ingredient, unlockedAt: new Date().toISOString() });
             updatedPlayer.unlockedIngredients.push(ingredient.id);
             updatedPlayer.statistics.ingredientsCollected++;
           }
         }
       }
 
-      // Save updated player data
-      setState(prev => ({ ...prev, player: updatedPlayer }));
       savePlayerData(updatedPlayer);
+      setState(prev => ({ ...prev, player: updatedPlayer }));
 
-      // Create notifications
       const notifications: AchievementNotification[] = newAchievements.map(achievement => ({
         achievement,
         timestamp: new Date().toISOString(),
@@ -222,7 +252,6 @@ export function useGameification(): GameificationState & GameificationActions {
         } : undefined
       }));
 
-      // Add events
       addEvent({
         type: 'xp_gained',
         amount: xpGained,
@@ -231,21 +260,11 @@ export function useGameification(): GameificationState & GameificationActions {
       });
 
       for (const achievement of newAchievements) {
-        addEvent({
-          type: 'achievement_unlocked',
-          achievement,
-          timestamp: new Date().toISOString()
-        });
+        addEvent({ type: 'achievement_unlocked', achievement, timestamp: new Date().toISOString() });
       }
-
       for (const ingredient of newIngredients) {
-        addEvent({
-          type: 'ingredient_unlocked',
-          ingredient,
-          timestamp: new Date().toISOString()
-        });
+        addEvent({ type: 'ingredient_unlocked', ingredient, timestamp: new Date().toISOString() });
       }
-
       if (progressionResult.levelUp) {
         addEvent({
           type: 'level_up',
@@ -262,16 +281,12 @@ export function useGameification(): GameificationState & GameificationActions {
       }));
 
       return notifications;
-
     } catch (error) {
       console.error('Failed to process recipe submission:', error);
-      setState(prev => ({
-        ...prev,
-        error: 'Failed to process achievements'
-      }));
+      setState(prev => ({ ...prev, error: 'Failed to process achievements' }));
       return [];
     }
-  }, [state.player, initializePlayer, savePlayerData, addEvent]);
+  }, [savePlayerData, addEvent]);
 
   const clearNotifications = useCallback(() => {
     setState(prev => ({ ...prev, pendingNotifications: [] }));
@@ -284,26 +299,26 @@ export function useGameification(): GameificationState & GameificationActions {
 
   const getUnlockedIngredients = useCallback((): Ingredient[] => {
     if (!state.player) return [];
-
     return INGREDIENTS
       .filter(ingredient => state.player!.unlockedIngredients.includes(ingredient.id))
-      .map(ingredient => ({
-        ...ingredient,
-        unlockedAt: new Date().toISOString() // Would be stored in real implementation
-      }));
+      .map(ingredient => ({ ...ingredient, unlockedAt: new Date().toISOString() }));
   }, [state.player]);
 
   const getProgress = useCallback(() => {
-    if (!state.player) {
-      return { percentage: 0, xpToNext: 0, nextLevel: null };
-    }
-
-    const percentage = ProgressionService.getLevelProgress(state.player.totalXP);
-    const xpToNext = ProgressionService.getXPToNextLevel(state.player.totalXP);
-    const nextLevel = ProgressionService.getNextLevel(state.player.level);
-
-    return { percentage, xpToNext, nextLevel };
+    if (!state.player) return { percentage: 0, xpToNext: 0, nextLevel: null };
+    return {
+      percentage: ProgressionService.getLevelProgress(state.player.totalXP),
+      xpToNext: ProgressionService.getXPToNextLevel(state.player.totalXP),
+      nextLevel: ProgressionService.getNextLevel(state.player.level)
+    };
   }, [state.player]);
+
+  const getAllChefProfiles = useCallback((): { name: string; profile: PlayerGamification }[] => {
+    const map = readChefMap();
+    return Object.entries(map)
+      .map(([name, profile]) => ({ name, profile }))
+      .sort((a, b) => b.profile.totalXP - a.profile.totalXP);
+  }, []);
 
   const resetPlayerData = useCallback(() => {
     try {
@@ -324,11 +339,13 @@ export function useGameification(): GameificationState & GameificationActions {
   return {
     ...state,
     initializePlayer,
+    loadChef,
     processRecipeSubmission,
     clearNotifications,
     getPlayerLevel,
     getUnlockedIngredients,
     getProgress,
+    getAllChefProfiles,
     resetPlayerData
   };
 }
