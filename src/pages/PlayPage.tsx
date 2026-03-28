@@ -296,7 +296,7 @@ function PlayPage() {
 
         {/* Achievement Notifications */}
         {activeNotifications.length > 0 && (
-          <div className="fixed top-[72px] right-4 z-[60] space-y-3 max-w-sm">
+          <div className="fixed top-[80px] right-4 z-[60] space-y-5 max-w-sm">
             {activeNotifications.map((notification, index) => (
               <AchievementAnimationWrapper key={index} isNew={true} rarity={notification.achievement.category === 'special' ? 'legendary' : 'epic'}>
                 <div className="relative">
@@ -307,15 +307,19 @@ function PlayPage() {
                     isUnlocked={true}
                     isNew={true}
                   />
+                  {/* Dismiss button — inside the card boundary */}
                   <button
                     onClick={() => handleDismissNotification(index)}
-                    className="absolute -top-2 -right-2 bg-hell-600 text-hell-100 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold hover:bg-hell-500 transition-colors"
+                    className="absolute top-2 right-2 bg-hell-600 text-hell-100 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold hover:bg-hell-500 transition-colors"
                   >
                     ×
                   </button>
+                  {/* +XP badge — below the card, no negative overhang */}
                   {notification.xpGained && (
-                    <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-flame-600 text-white text-xs px-2 py-1 rounded-full font-bold animate-bounce">
-                      +{notification.xpGained} XP
+                    <div className="flex justify-center mt-1">
+                      <span className="bg-flame-600 text-white text-xs px-3 py-1 rounded-full font-bold animate-bounce shadow-lg">
+                        +{notification.xpGained} XP
+                      </span>
                     </div>
                   )}
                 </div>
