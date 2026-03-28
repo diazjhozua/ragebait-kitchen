@@ -4,8 +4,11 @@ import { useApiKey } from '../../hooks/useApiKey';
 import { useOpenAI } from '../../hooks/useOpenAI';
 import { validateWithSchema, recipeSchema, playerNameSchema } from '../../utils/validation';
 import { JUDGE_STYLES, LIMITS } from '../../utils/constants';
+import { StorageService } from '../../services/storage';
 import Button from '../common/Button';
 import LoadingSpinner from '../common/LoadingSpinner';
+
+type NameMode = 'select' | 'add' | 'edit';
 
 interface RecipeFormProps {
   onJudgeComplete?: (response: JudgeResponse, recipe: Recipe, playerName: string, judgeStyle: JudgeStyle) => void;
@@ -24,6 +27,19 @@ export default function RecipeForm({ onJudgeComplete, resetKey, className = '' }
   useEffect(() => {
     onJudgeCompleteRef.current = onJudgeComplete;
   });
+
+  // Chef name state
+  const [existingNames, setExistingNames] = useState<string[]>(() => {
+    const entries = StorageService.getLeaderboardEntries();
+    return [...new Set(entries.map(e => e.playerName))].filter(Boolean);
+  });
+  const [nameMode, setNameMode] = useState<NameMode>(() => {
+    const entries = StorageService.getLeaderboardEntries();
+    const names = [...new Set(entries.map(e => e.playerName))].filter(Boolean);
+    return names.length === 0 ? 'add' : 'select';
+  });
+  const [nameInput, setNameInput] = useState('');
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   // Form state
   const [playerName, setPlayerName] = useState(() => {
@@ -61,6 +77,31 @@ export default function RecipeForm({ onJudgeComplete, resetKey, className = '' }
     }
   }, [playerName]);
 
+  // Reload names after each submission; sync playerName if needed
+  useEffect(() => {
+    if (resetKey !== undefined) {
+      const entries = StorageService.getLeaderboardEntries();
+      const names = [...new Set(entries.map(e => e.playerName))].filter(Boolean);
+      setExistingNames(names);
+      setNameMode(names.length === 0 ? 'add' : 'select');
+    }
+  }, [resetKey]);
+
+  // Ensure playerName is always one of the existing names when in select mode
+  useEffect(() => {
+    if (nameMode === 'select' && existingNames.length > 0 && !existingNames.includes(playerName)) {
+      setPlayerName(existingNames[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [existingNames, nameMode]);
+
+  // Focus the input when entering add/edit mode
+  useEffect(() => {
+    if (nameMode === 'add' || nameMode === 'edit') {
+      nameInputRef.current?.focus();
+    }
+  }, [nameMode]);
+
   // Clear errors when user types
   useEffect(() => {
     if (errors.playerName && playerName.trim()) {
@@ -97,6 +138,23 @@ export default function RecipeForm({ onJudgeComplete, resetKey, className = '' }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [response, submittedRecipe, submittedPlayerName, submittedJudgeStyle]);
+
+  const handleSaveName = () => {
+    const trimmed = nameInput.trim();
+    if (!trimmed) return;
+
+    if (nameMode === 'add') {
+      if (!existingNames.includes(trimmed)) {
+        setExistingNames(prev => [...prev, trimmed]);
+      }
+      setPlayerName(trimmed);
+    } else if (nameMode === 'edit') {
+      const oldName = playerName;
+      setExistingNames(prev => prev.map(n => n === oldName ? trimmed : n));
+      setPlayerName(trimmed);
+    }
+    setNameMode('select');
+  };
 
   const validateForm = () => {
     const newErrors: typeof errors = {};
@@ -183,21 +241,90 @@ export default function RecipeForm({ onJudgeComplete, resetKey, className = '' }
       <form onSubmit={handleSubmit} className="p-6 space-y-6">
         {/* Player Name */}
         <div>
-          <label htmlFor="playerName" className="block text-sm font-bold text-hell-300 mb-2 flex items-center space-x-2">
+          <label className="block text-sm font-bold text-hell-300 mb-2 flex items-center space-x-2">
             <span>👨‍🍳</span>
             <span>Chef Name</span>
           </label>
-          <input
-            id="playerName"
-            type="text"
-            value={playerName}
-            onChange={(e) => setPlayerName(e.target.value)}
-            placeholder="Enter your chef name"
-            className={`w-full px-4 py-3 bg-kitchen-800 border-2 rounded-lg shadow-lg text-hell-100 placeholder-steel-400
-              focus:ring-2 focus:ring-hell-500 focus:border-hell-500 transition-all duration-200 font-semibold
-              ${errors.playerName ? 'border-hell-500 ring-2 ring-hell-400' : 'border-steel-600 hover:border-flame-500'}`}
-            maxLength={LIMITS.PLAYER_NAME_MAX}
-          />
+
+          {nameMode === 'select' ? (
+            <div className="flex gap-2">
+              <select
+                id="playerName"
+                value={playerName}
+                onChange={(e) => setPlayerName(e.target.value)}
+                className={`flex-1 px-4 py-3 bg-kitchen-800 border-2 rounded-lg shadow-lg text-hell-100 font-semibold
+                  focus:ring-2 focus:ring-hell-500 focus:border-hell-500 hover:border-flame-500 transition-all duration-200
+                  ${errors.playerName ? 'border-hell-500 ring-2 ring-hell-400' : 'border-steel-600'}`}
+              >
+                {existingNames.map(name => (
+                  <option key={name} value={name} className="bg-kitchen-800 text-hell-100">
+                    {name}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={() => { setNameInput(''); setNameMode('add'); }}
+                title="Add new chef name"
+                className="px-3 py-3 bg-kitchen-800 border-2 border-steel-600 rounded-lg text-hell-300
+                  hover:border-flame-500 hover:text-flame-300 transition-all font-bold text-sm whitespace-nowrap"
+              >
+                + Add
+              </button>
+              <button
+                type="button"
+                onClick={() => { setNameInput(playerName); setNameMode('edit'); }}
+                title="Edit selected name"
+                className="px-3 py-3 bg-kitchen-800 border-2 border-steel-600 rounded-lg text-hell-300
+                  hover:border-flame-500 hover:text-flame-300 transition-all text-sm"
+              >
+                ✏️
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <p className="text-sm text-flame-400 font-semibold">
+                {nameMode === 'add' ? '✨ New chef name:' : '✏️ Editing name:'}
+              </p>
+              <input
+                ref={nameInputRef}
+                type="text"
+                value={nameInput}
+                onChange={(e) => setNameInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') { e.preventDefault(); handleSaveName(); }
+                  if (e.key === 'Escape' && existingNames.length > 0) setNameMode('select');
+                }}
+                placeholder="Enter chef name"
+                className={`w-full px-4 py-3 bg-kitchen-800 border-2 rounded-lg shadow-lg text-hell-100 placeholder-steel-400
+                  focus:ring-2 focus:ring-hell-500 focus:border-hell-500 transition-all duration-200 font-semibold
+                  ${errors.playerName ? 'border-hell-500 ring-2 ring-hell-400' : 'border-steel-600 hover:border-flame-500'}`}
+                maxLength={LIMITS.PLAYER_NAME_MAX}
+              />
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={handleSaveName}
+                  disabled={!nameInput.trim()}
+                  className="px-4 py-2 bg-flame-600 border-2 border-flame-500 rounded-lg text-white font-bold text-sm
+                    hover:bg-flame-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Save
+                </button>
+                {existingNames.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setNameMode('select')}
+                    className="px-4 py-2 bg-kitchen-800 border-2 border-steel-600 rounded-lg text-hell-300
+                      font-bold text-sm hover:border-flame-500 hover:text-flame-300 transition-all"
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
           {errors.playerName && (
             <p className="mt-2 text-sm text-hell-400 flex items-center space-x-1">
               <span>⚠️</span>
