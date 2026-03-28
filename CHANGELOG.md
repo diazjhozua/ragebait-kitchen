@@ -1,3 +1,17 @@
+# [1.4.0](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.3.0...v1.4.0) (2026-03-28)
+
+
+### Bug Fixes
+
+* **ui:** clear XP notification fully above the nav header ([aa9723d](https://github.com/diazjhozua/ragebait-kitchen/commit/aa9723dd7c577f1bf5b9736ab2640faa47a169d0))
+
+
+### Features
+
+* **gamification:** add per-chef XP tracking and XP leaderboard tab ([e58056d](https://github.com/diazjhozua/ragebait-kitchen/commit/e58056d94419466e79edb0c7f90028918132e075))
+* implement chef name selection and management ([d7f9999](https://github.com/diazjhozua/ragebait-kitchen/commit/d7f99991a17a3e171d39c362063f0043c56c2dff))
+* **layout:** move verdict above grid, add live level badge near chef name ([fa61c9b](https://github.com/diazjhozua/ragebait-kitchen/commit/fa61c9bf158d5c9d55291a5006d7bf45964183b2))
+
 # [1.3.0](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.2.0...v1.3.0) (2026-03-27)
 
 
