@@ -296,7 +296,7 @@ function PlayPage() {
 
         {/* Achievement Notifications */}
         {activeNotifications.length > 0 && (
-          <div className="fixed top-4 right-4 z-40 space-y-3 max-w-sm">
+          <div className="fixed top-[72px] right-4 z-[60] space-y-3 max-w-sm">
             {activeNotifications.map((notification, index) => (
               <AchievementAnimationWrapper key={index} isNew={true} rarity={notification.achievement.category === 'special' ? 'legendary' : 'epic'}>
                 <div className="relative">

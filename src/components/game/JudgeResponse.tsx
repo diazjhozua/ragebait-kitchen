@@ -12,6 +12,19 @@ interface JudgeResponseProps {
   className?: string;
 }
 
+function getScoreLabel(score: number) {
+  if (score >= 90) return { label: 'ABSOLUTE DISASTER', color: '#dc2626' };
+  if (score >= 80) return { label: 'KITCHEN NIGHTMARE', color: '#ea580c' };
+  if (score >= 70) return { label: 'BLOODY AWFUL', color: '#f97316' };
+  if (score >= 60) return { label: 'TERRIBLE', color: '#f59e0b' };
+  if (score >= 50) return { label: 'POOR', color: '#eab308' };
+  if (score >= 40) return { label: 'NEEDS WORK', color: '#84cc16' };
+  if (score >= 30) return { label: 'MEDIOCRE', color: '#22c55e' };
+  if (score >= 20) return { label: 'NOT BAD', color: '#10b981' };
+  if (score >= 10) return { label: 'DECENT', color: '#06b6d4' };
+  return { label: 'ACTUALLY GOOD??', color: '#6366f1' };
+}
+
 export default function JudgeResponseComponent({
   response,
   onSaveToLeaderboard,
@@ -26,35 +39,63 @@ export default function JudgeResponseComponent({
     ? response.reaction.substring(0, 200) + '...'
     : response.reaction;
 
+  const scoreInfo = getScoreLabel(response.rage_score);
+
   return (
-    <div className={`bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden ${className}`}>
+    <div className={`hell-kitchen-bg border-2 border-hell-600 rounded-xl shadow-2xl hell-glow overflow-hidden ${className}`}>
+
       {/* Header */}
-      <div className="bg-gradient-to-r from-rage-600 to-red-600 text-white px-6 py-4">
+      <div
+        className="relative px-6 py-5 border-b border-flame-700"
+        style={{
+          background: 'linear-gradient(135deg, rgba(127,29,29,0.6) 0%, rgba(30,0,0,0.8) 60%, rgba(154,52,18,0.4) 100%)',
+        }}
+      >
+        <span className="absolute top-3 left-4 text-xl animate-flame-flicker opacity-60">🔥</span>
+        <span className="absolute top-3 right-4 text-xl animate-flame-flicker opacity-60" style={{ animationDelay: '0.5s' }}>🔥</span>
+
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-bold flex items-center">
-            👨‍🍳 Gordon's Verdict
-          </h3>
+          <div>
+            <h3
+              className="font-chef font-black uppercase tracking-widest text-white"
+              style={{ fontSize: '1.35rem', textShadow: '0 0 20px rgba(220,38,38,0.8)' }}
+            >
+              Gordon's Verdict
+            </h3>
+            <div
+              className="text-xs font-black uppercase tracking-widest mt-0.5"
+              style={{ color: scoreInfo.color, textShadow: `0 0 8px ${scoreInfo.color}` }}
+            >
+              {scoreInfo.label}
+            </div>
+          </div>
           <div className="text-right">
-            <div className="text-sm opacity-90">Rage Level</div>
-            <div className="text-2xl font-bold">{response.rage_score}/100</div>
+            <div className="text-xs text-steel-400 uppercase tracking-wider font-semibold mb-0.5">Rage Level</div>
+            <div
+              className="font-black text-3xl"
+              style={{ color: scoreInfo.color, textShadow: `0 0 14px ${scoreInfo.color}` }}
+            >
+              {response.rage_score}<span className="text-base text-steel-500 font-bold">/100</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="p-6">
+      <div className="p-6 space-y-5">
         {/* Rage Score Visualization */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center">
           <RageScore score={response.rage_score} size="md" />
         </div>
 
         {/* Tags */}
-        <div className="mb-6">
-          <h4 className="text-sm font-semibold text-gray-700 mb-2">Reaction Tags</h4>
+        <div>
+          <h4 className="text-xs font-black uppercase tracking-widest text-flame-400 mb-2">Reaction Tags</h4>
           <div className="flex flex-wrap gap-2">
             {response.tags.map((tag, index) => (
               <span
                 key={index}
-                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800"
+                className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-hell-800 border border-hell-600 text-flame-300"
+                style={{ boxShadow: '0 0 6px rgba(220,38,38,0.2)' }}
               >
                 #{tag}
               </span>
@@ -63,12 +104,12 @@ export default function JudgeResponseComponent({
         </div>
 
         {/* Reasons */}
-        <div className="mb-6">
-          <h4 className="text-sm font-semibold text-gray-700 mb-2">Why This Score</h4>
-          <ul className="space-y-1">
+        <div>
+          <h4 className="text-xs font-black uppercase tracking-widest text-flame-400 mb-2">Why This Score</h4>
+          <ul className="space-y-1.5">
             {response.reasons.map((reason, index) => (
-              <li key={index} className="flex items-start text-sm text-gray-600">
-                <span className="text-red-500 mr-2 mt-1">•</span>
+              <li key={index} className="flex items-start text-sm text-hell-200">
+                <span className="text-flame-500 mr-2 mt-0.5 flex-shrink-0">▸</span>
                 {reason}
               </li>
             ))}
@@ -76,16 +117,26 @@ export default function JudgeResponseComponent({
         </div>
 
         {/* Chef's Reaction */}
-        <div className="mb-6">
-          <h4 className="text-sm font-semibold text-gray-700 mb-2">Chef's Reaction</h4>
-          <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-rage-500">
-            <blockquote className="text-gray-800 leading-relaxed font-chef italic">
+        <div>
+          <h4 className="text-xs font-black uppercase tracking-widest text-flame-400 mb-2">Chef's Reaction</h4>
+          <div
+            className="rounded-lg p-4 border-l-4"
+            style={{
+              background: 'rgba(10,0,0,0.5)',
+              borderLeftColor: scoreInfo.color,
+              boxShadow: `inset 0 0 20px rgba(0,0,0,0.3), 0 0 12px rgba(220,38,38,0.08)`,
+            }}
+          >
+            <blockquote
+              className="leading-relaxed font-chef italic text-hell-100"
+              style={{ fontSize: '1rem', textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}
+            >
               "{displayText}"
             </blockquote>
             {shouldTruncate && (
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="mt-2 text-rage-600 hover:text-rage-700 text-sm font-medium underline"
+                className="mt-2 text-flame-400 hover:text-flame-300 text-xs font-bold underline transition-colors"
               >
                 {isExpanded ? 'Show Less' : 'Read Full Reaction'}
               </button>
@@ -95,24 +146,26 @@ export default function JudgeResponseComponent({
 
         {/* Similarity Warning */}
         {response.similarity && response.similarity.penaltyType !== 'none' && (
-          <SimilarityWarning similarity={response.similarity} className="mb-6" />
+          <SimilarityWarning similarity={response.similarity} className="mb-1" />
         )}
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 pt-1">
           {onSaveToLeaderboard && (
             <Button
               onClick={onSaveToLeaderboard}
               isLoading={isSaving}
               loadingText="Saving..."
-              className="flex-1"
+              variant="hell"
+              withFlame={true}
+              className="flex-1 font-bold"
             >
               🏆 Save to Leaderboard
             </Button>
           )}
           {onTryAgain && (
             <Button
-              variant="outline"
+              variant="secondary"
               onClick={onTryAgain}
               className="flex-1"
             >
@@ -122,35 +175,22 @@ export default function JudgeResponseComponent({
         </div>
 
         {/* Score Breakdown */}
-        <div className="mt-6 pt-4 border-t border-gray-200">
+        <div className="pt-3 border-t border-hell-700">
           <details className="group">
-            <summary className="cursor-pointer text-sm font-medium text-gray-600 hover:text-gray-900 flex items-center">
-              <svg className="w-4 h-4 mr-2 transform group-open:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <summary className="cursor-pointer text-xs font-bold text-steel-400 hover:text-hell-300 flex items-center uppercase tracking-wider transition-colors">
+              <svg className="w-3 h-3 mr-2 transform group-open:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
               Score Breakdown
             </summary>
-            <div className="mt-3 text-sm text-gray-600">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <div className="font-medium">Score Range</div>
-                  <div className="text-xs text-gray-500">
-                    {response.rage_score >= 90 ? '90-100: Absolute Disaster' :
-                     response.rage_score >= 80 ? '80-89: Kitchen Nightmare' :
-                     response.rage_score >= 70 ? '70-79: Bloody Awful' :
-                     response.rage_score >= 60 ? '60-69: Terrible' :
-                     response.rage_score >= 50 ? '50-59: Poor' :
-                     response.rage_score >= 40 ? '40-49: Needs Work' :
-                     response.rage_score >= 30 ? '30-39: Mediocre' :
-                     response.rage_score >= 20 ? '20-29: Not Bad' :
-                     response.rage_score >= 10 ? '10-19: Decent' :
-                     '0-9: Actually Good'}
-                  </div>
-                </div>
-                <div>
-                  <div className="font-medium">Tag Count</div>
-                  <div className="text-xs text-gray-500">{response.tags.length} reaction tags</div>
-                </div>
+            <div className="mt-3 grid grid-cols-2 gap-4">
+              <div className="bg-hell-800 rounded-lg p-3 border border-hell-700">
+                <div className="text-xs font-bold text-hell-300 mb-1">Score Range</div>
+                <div className="text-xs font-semibold" style={{ color: scoreInfo.color }}>{scoreInfo.label}</div>
+              </div>
+              <div className="bg-hell-800 rounded-lg p-3 border border-hell-700">
+                <div className="text-xs font-bold text-hell-300 mb-1">Tag Count</div>
+                <div className="text-xs text-flame-300 font-semibold">{response.tags.length} reaction tags</div>
               </div>
             </div>
           </details>
