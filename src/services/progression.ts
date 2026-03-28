@@ -322,8 +322,9 @@ export class ProgressionService {
   /**
    * Initialize new player gamification data
    */
-  static initializePlayer(_playerName: string): PlayerGamification {
+  static initializePlayer(playerName: string): PlayerGamification {
     return {
+      name: playerName,
       level: 0,
       xp: 0,
       totalXP: 0,

@@ -60,6 +60,7 @@ export interface Ingredient {
 
 // Player gamification state
 export interface PlayerGamification {
+  name: string;
   level: number;
   xp: number;
   totalXP: number;
@@ -70,6 +71,9 @@ export interface PlayerGamification {
   createdAt: string;
   lastUpdated: string;
 }
+
+// Per-chef gamification map stored in localStorage
+export type ChefGamificationMap = Record<string, PlayerGamification>;
 
 export interface PlayerStatistics {
   totalRecipes: number;
