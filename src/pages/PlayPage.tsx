@@ -10,7 +10,6 @@ import RecipeForm from '../components/game/RecipeForm';
 import JudgeResponseComponent from '../components/game/JudgeResponse';
 import Leaderboard from '../components/leaderboard/Leaderboard';
 import XPLeaderboard from '../components/gamification/XPLeaderboard';
-import PlayerLevel from '../components/gamification/PlayerLevel';
 import AchievementBadge from '../components/gamification/AchievementBadge';
 import { KitchenAmbiance, ScoreAnimationWrapper, AchievementAnimationWrapper } from '../components/effects/AnimationWrapper';
 
@@ -22,7 +21,6 @@ function PlayPage() {
     processRecipeSubmission,
     clearNotifications,
     getPlayerLevel,
-    getProgress,
     loadChef,
     getAllChefProfiles
   } = useGameification();
@@ -197,18 +195,6 @@ function PlayPage() {
               <span style={{ color: 'rgba(239,68,68,0.85)', fontWeight: 700 }}>Gordon Ramsay WILL disagree</span>
             </p>
 
-            {/* Player Level Display */}
-            {player && getPlayerLevel() && (
-              <div className="mt-5 flex justify-center">
-                <PlayerLevel
-                  level={getPlayerLevel()!}
-                  currentXP={player.totalXP}
-                  nextLevel={getProgress().nextLevel}
-                  size="sm"
-                  showProgress={true}
-                />
-              </div>
-            )}
 
             {/* Level Up Celebration */}
             {showLevelUp && (
@@ -232,6 +218,18 @@ function PlayPage() {
           </div>
         )}
 
+        {/* Gordon's Verdict — full-width above the grid when a response is ready */}
+        {judgeResponse && (
+          <ScoreAnimationWrapper score={judgeResponse.rage_score} className="mb-8">
+            <JudgeResponseComponent
+              response={judgeResponse}
+              onSaveToLeaderboard={handleSaveToLeaderboard}
+              onTryAgain={handleTryAgain}
+              isSaving={isSaving}
+            />
+          </ScoreAnimationWrapper>
+        )}
+
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
           {/* Recipe Form Panel */}
           <div className="xl:col-span-2 animate-fade-in">
@@ -239,6 +237,7 @@ function PlayPage() {
               <RecipeForm
                 onJudgeComplete={handleJudgeComplete}
                 onChefChange={loadChef}
+                playerInfo={player ? { level: player.level, title: player.title, totalXP: player.totalXP } : null}
                 resetKey={resetKey}
               />
             ) : (
@@ -256,53 +255,42 @@ function PlayPage() {
             )}
           </div>
 
-          {/* Results/Leaderboard Panel */}
+          {/* Leaderboard Panel */}
           <div className="xl:col-span-1 animate-fade-in delay-200 xl:sticky xl:top-8 xl:max-h-[calc(100vh-6rem)] xl:overflow-y-auto">
-            {judgeResponse ? (
-              <ScoreAnimationWrapper score={judgeResponse.rage_score}>
-                <JudgeResponseComponent
-                  response={judgeResponse}
-                  onSaveToLeaderboard={handleSaveToLeaderboard}
-                  onTryAgain={handleTryAgain}
-                  isSaving={isSaving}
-                />
-              </ScoreAnimationWrapper>
-            ) : (
-              <div>
-                {/* Tab switcher */}
-                <div className="flex mb-4 border-b border-flame-700">
-                  <button
-                    onClick={() => setXpTabActive(false)}
-                    className={`px-4 py-2 text-sm font-bold transition-colors ${
-                      !xpTabActive
-                        ? 'text-flame-300 border-b-2 border-flame-400'
-                        : 'text-steel-400 hover:text-hell-300'
-                    }`}
-                  >
-                    🔥 Score
-                  </button>
-                  <button
-                    onClick={() => setXpTabActive(true)}
-                    className={`px-4 py-2 text-sm font-bold transition-colors ${
-                      xpTabActive
-                        ? 'text-flame-300 border-b-2 border-flame-400'
-                        : 'text-steel-400 hover:text-hell-300'
-                    }`}
-                  >
-                    ⭐ XP
-                  </button>
-                </div>
-
-                {xpTabActive ? (
-                  <XPLeaderboard profiles={getAllChefProfiles()} />
-                ) : (
-                  <Leaderboard
-                    showControls={true}
-                    onEntryClick={handleEntryClick}
-                  />
-                )}
+            <div>
+              {/* Tab switcher */}
+              <div className="flex mb-4 border-b border-flame-700">
+                <button
+                  onClick={() => setXpTabActive(false)}
+                  className={`px-4 py-2 text-sm font-bold transition-colors ${
+                    !xpTabActive
+                      ? 'text-flame-300 border-b-2 border-flame-400'
+                      : 'text-steel-400 hover:text-hell-300'
+                  }`}
+                >
+                  🔥 Score
+                </button>
+                <button
+                  onClick={() => setXpTabActive(true)}
+                  className={`px-4 py-2 text-sm font-bold transition-colors ${
+                    xpTabActive
+                      ? 'text-flame-300 border-b-2 border-flame-400'
+                      : 'text-steel-400 hover:text-hell-300'
+                  }`}
+                >
+                  ⭐ XP
+                </button>
               </div>
-            )}
+
+              {xpTabActive ? (
+                <XPLeaderboard profiles={getAllChefProfiles()} />
+              ) : (
+                <Leaderboard
+                  showControls={true}
+                  onEntryClick={handleEntryClick}
+                />
+              )}
+            </div>
           </div>
         </div>
 

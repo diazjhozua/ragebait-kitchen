@@ -10,14 +10,21 @@ import LoadingSpinner from '../common/LoadingSpinner';
 
 type NameMode = 'select' | 'add' | 'edit';
 
+interface PlayerInfo {
+  level: number;
+  title: string;
+  totalXP: number;
+}
+
 interface RecipeFormProps {
   onJudgeComplete?: (response: JudgeResponse, recipe: Recipe, playerName: string, judgeStyle: JudgeStyle) => void;
   onChefChange?: (name: string) => void;
+  playerInfo?: PlayerInfo | null;
   resetKey?: string | number; // When this changes, reset the form
   className?: string;
 }
 
-export default function RecipeForm({ onJudgeComplete, onChefChange, resetKey, className = '' }: RecipeFormProps) {
+export default function RecipeForm({ onJudgeComplete, onChefChange, playerInfo, resetKey, className = '' }: RecipeFormProps) {
   const { isValid: hasValidApiKey } = useApiKey();
   const { judgeRecipe, isLoading, response, error, reset } = useOpenAI();
 
@@ -333,6 +340,17 @@ export default function RecipeForm({ onJudgeComplete, onChefChange, resetKey, cl
               <span>⚠️</span>
               <span>{errors.playerName}</span>
             </p>
+          )}
+
+          {/* Player level badge — shown when a chef is selected and has a profile */}
+          {playerInfo && playerName.trim() && (
+            <div className="mt-2 flex items-center gap-2 px-3 py-2 bg-kitchen-800 border border-steel-700 rounded-lg w-fit">
+              <div className="w-6 h-6 rounded-full bg-hell-700 border border-steel-500 flex items-center justify-center text-xs font-black text-flame-300">
+                {playerInfo.level}
+              </div>
+              <span className="text-xs font-bold text-hell-300">{playerInfo.title}</span>
+              <span className="text-xs text-steel-400">{playerInfo.totalXP.toLocaleString()} XP</span>
+            </div>
           )}
         </div>
 
