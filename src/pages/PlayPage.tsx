@@ -9,6 +9,7 @@ import ApiKeyPrompt from '../components/game/ApiKeyPrompt';
 import RecipeForm from '../components/game/RecipeForm';
 import JudgeResponseComponent from '../components/game/JudgeResponse';
 import Leaderboard from '../components/leaderboard/Leaderboard';
+import XPLeaderboard from '../components/gamification/XPLeaderboard';
 import PlayerLevel from '../components/gamification/PlayerLevel';
 import AchievementBadge from '../components/gamification/AchievementBadge';
 import { KitchenAmbiance, ScoreAnimationWrapper, AchievementAnimationWrapper } from '../components/effects/AnimationWrapper';
@@ -22,7 +23,8 @@ function PlayPage() {
     clearNotifications,
     getPlayerLevel,
     getProgress,
-    initializePlayer
+    loadChef,
+    getAllChefProfiles
   } = useGameification();
 
   const [judgeResponse, setJudgeResponse] = useState<JudgeResponse | null>(null);
@@ -35,6 +37,7 @@ function PlayPage() {
   const [resetKey, setResetKey] = useState(0);
   const [activeNotifications, setActiveNotifications] = useState<AchievementNotification[]>([]);
   const [showLevelUp, setShowLevelUp] = useState(false);
+  const [xpTabActive, setXpTabActive] = useState(false);
 
   const handleJudgeComplete = async (response: JudgeResponse, recipe: Recipe, playerName: string, judgeStyle: JudgeStyle) => {
     setJudgeResponse(response);
@@ -42,13 +45,8 @@ function PlayPage() {
     setLastPlayerName(playerName);
     setLastJudgeStyle(judgeStyle);
 
-    // Initialize player if this is their first recipe
-    if (!player && playerName.trim()) {
-      initializePlayer(playerName.trim());
-    }
-
     // Process gamification for this recipe submission
-    if (player || playerName.trim()) {
+    if (playerName.trim()) {
       try {
         const notifications = await processRecipeSubmission(
           recipe,
@@ -238,7 +236,11 @@ function PlayPage() {
           {/* Recipe Form Panel */}
           <div className="xl:col-span-2 animate-fade-in">
             {hasValidApiKey ? (
-              <RecipeForm onJudgeComplete={handleJudgeComplete} resetKey={resetKey} />
+              <RecipeForm
+                onJudgeComplete={handleJudgeComplete}
+                onChefChange={loadChef}
+                resetKey={resetKey}
+              />
             ) : (
               <div className="hell-kitchen-bg border-2 border-hell-600 rounded-lg shadow-xl p-12 text-center hell-glow">
                 <div className="text-hell-300">
@@ -266,10 +268,40 @@ function PlayPage() {
                 />
               </ScoreAnimationWrapper>
             ) : (
-              <Leaderboard
-                showControls={true}
-                onEntryClick={handleEntryClick}
-              />
+              <div>
+                {/* Tab switcher */}
+                <div className="flex mb-4 border-b border-flame-700">
+                  <button
+                    onClick={() => setXpTabActive(false)}
+                    className={`px-4 py-2 text-sm font-bold transition-colors ${
+                      !xpTabActive
+                        ? 'text-flame-300 border-b-2 border-flame-400'
+                        : 'text-steel-400 hover:text-hell-300'
+                    }`}
+                  >
+                    🔥 Score
+                  </button>
+                  <button
+                    onClick={() => setXpTabActive(true)}
+                    className={`px-4 py-2 text-sm font-bold transition-colors ${
+                      xpTabActive
+                        ? 'text-flame-300 border-b-2 border-flame-400'
+                        : 'text-steel-400 hover:text-hell-300'
+                    }`}
+                  >
+                    ⭐ XP
+                  </button>
+                </div>
+
+                {xpTabActive ? (
+                  <XPLeaderboard profiles={getAllChefProfiles()} />
+                ) : (
+                  <Leaderboard
+                    showControls={true}
+                    onEntryClick={handleEntryClick}
+                  />
+                )}
+              </div>
             )}
           </div>
         </div>

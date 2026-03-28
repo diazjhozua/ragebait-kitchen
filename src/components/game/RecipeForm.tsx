@@ -12,11 +12,12 @@ type NameMode = 'select' | 'add' | 'edit';
 
 interface RecipeFormProps {
   onJudgeComplete?: (response: JudgeResponse, recipe: Recipe, playerName: string, judgeStyle: JudgeStyle) => void;
+  onChefChange?: (name: string) => void;
   resetKey?: string | number; // When this changes, reset the form
   className?: string;
 }
 
-export default function RecipeForm({ onJudgeComplete, resetKey, className = '' }: RecipeFormProps) {
+export default function RecipeForm({ onJudgeComplete, onChefChange, resetKey, className = '' }: RecipeFormProps) {
   const { isValid: hasValidApiKey } = useApiKey();
   const { judgeRecipe, isLoading, response, error, reset } = useOpenAI();
 
@@ -66,7 +67,7 @@ export default function RecipeForm({ onJudgeComplete, resetKey, className = '' }
   const [submittedPlayerName, setSubmittedPlayerName] = useState<string>('');
   const [submittedJudgeStyle, setSubmittedJudgeStyle] = useState<JudgeStyle>('classic-rage');
 
-  // Save player name to localStorage
+  // Save player name to localStorage and notify parent of chef change
   useEffect(() => {
     if (playerName.trim()) {
       try {
@@ -74,7 +75,9 @@ export default function RecipeForm({ onJudgeComplete, resetKey, className = '' }
       } catch {
         // Ignore storage errors
       }
+      onChefChange?.(playerName.trim());
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playerName]);
 
   // Reload names after each submission; sync playerName if needed
