@@ -131,10 +131,13 @@ export default function RecipeForm({ onJudgeComplete, onChefChange, playerInfo, 
     }
   }, [recipeTitle, errors.recipeTitle]);
 
-  // Reset OpenAI hook when resetKey changes
+  // Reset OpenAI hook and clear recipe fields when resetKey changes
   useEffect(() => {
     if (resetKey !== undefined) {
       reset();
+      setRecipeContent('');
+      setRecipeTitle('');
+      setErrors({});
     }
   }, [resetKey, reset]);
 
