@@ -45,7 +45,7 @@ export default function AnimationWrapper({
 
   // Determine animation based on score
   useEffect(() => {
-    if (trigger === 'score' && score > 0) {
+    if (trigger === 'score') {
       if (score >= 95) {
         setCurrentAnimation('explosion');
         setIsAnimating(true);
@@ -124,7 +124,8 @@ export function ScoreAnimationWrapper({
       trigger="score"
       score={score}
       intensity={score >= 90 ? 'high' : score >= 70 ? 'medium' : 'low'}
-      duration={score >= 90 ? 3 : 2}
+      duration={2}
+      repeat={false}
       className={className}
     >
       {children}
