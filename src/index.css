@@ -1094,3 +1094,23 @@
     transform: translateY(0);
   }
 }
+
+/* One-shot GPU-accelerated entrance for the Gordon verdict card */
+@keyframes verdictReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(-18px) scale(0.97);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(3px) scale(1.005);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-verdict-reveal {
+  animation: verdictReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}

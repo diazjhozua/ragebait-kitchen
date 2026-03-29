@@ -42,7 +42,17 @@ export default function JudgeResponseComponent({
   const scoreInfo = getScoreLabel(response.rage_score);
 
   return (
-    <div className={`hell-kitchen-bg border-2 border-hell-600 rounded-xl shadow-2xl hell-glow overflow-hidden ${className}`}>
+    <div
+      className={`hell-kitchen-bg border-2 rounded-xl overflow-hidden transition-shadow ${className}`}
+      style={{
+        borderColor: response.rage_score >= 90 ? scoreInfo.color : undefined,
+        boxShadow: response.rage_score >= 90
+          ? `0 0 40px ${scoreInfo.color}55, 0 0 80px ${scoreInfo.color}22, 0 8px 32px rgba(0,0,0,0.6)`
+          : response.rage_score >= 70
+            ? `0 0 20px rgba(220,38,38,0.3), 0 8px 32px rgba(0,0,0,0.5)`
+            : `0 8px 24px rgba(0,0,0,0.4)`,
+      }}
+    >
 
       {/* Header */}
       <div

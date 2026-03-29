@@ -228,14 +228,14 @@ function PlayPage() {
 
         {/* Gordon's Verdict — full-width above the grid when a response is ready */}
         {judgeResponse && (
-          <ScoreAnimationWrapper score={judgeResponse.rage_score} className="mb-8">
+          <div className="mb-8 animate-verdict-reveal">
             <JudgeResponseComponent
               response={judgeResponse}
               onSaveToLeaderboard={handleSaveToLeaderboard}
               onTryAgain={handleTryAgain}
               isSaving={isSaving}
             />
-          </ScoreAnimationWrapper>
+          </div>
         )}
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
