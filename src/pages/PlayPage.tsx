@@ -10,8 +10,8 @@ import RecipeForm from '../components/game/RecipeForm';
 import JudgeResponseComponent from '../components/game/JudgeResponse';
 import Leaderboard from '../components/leaderboard/Leaderboard';
 import XPLeaderboard from '../components/gamification/XPLeaderboard';
-import AchievementBadge from '../components/gamification/AchievementBadge';
-import { KitchenAmbiance, ScoreAnimationWrapper, AchievementAnimationWrapper } from '../components/effects/AnimationWrapper';
+import { AchievementNotificationCard } from '../components/gamification/AchievementBadge';
+import { KitchenAmbiance, ScoreAnimationWrapper } from '../components/effects/AnimationWrapper';
 
 function PlayPage() {
   const hasValidApiKey = useHasValidApiKey();
@@ -27,10 +27,6 @@ function PlayPage() {
   } = useGameification();
 
   const [judgeResponse, setJudgeResponse] = useState<JudgeResponse | null>(null);
-  const [lastRecipe, setLastRecipe] = useState<Recipe | null>(null);
-  const [lastPlayerName, setLastPlayerName] = useState<string>('');
-  const [lastJudgeStyle, setLastJudgeStyle] = useState<JudgeStyle>('classic-rage');
-  const [isSaving, setIsSaving] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<LeaderboardEntry | null>(null);
   const [showFullLeaderboard, setShowFullLeaderboard] = useState(false);
   const [resetKey, setResetKey] = useState(0);
@@ -40,9 +36,9 @@ function PlayPage() {
 
   const handleJudgeComplete = async (response: JudgeResponse, recipe: Recipe, playerName: string, judgeStyle: JudgeStyle) => {
     setJudgeResponse(response);
-    setLastRecipe(recipe);
-    setLastPlayerName(playerName);
-    setLastJudgeStyle(judgeStyle);
+
+    // Auto-save to leaderboard (fire and forget)
+    addEntry(recipe, response, playerName.trim(), judgeStyle);
 
     // Process gamification for this recipe submission
     if (playerName.trim()) {
@@ -73,10 +69,6 @@ function PlayPage() {
 
   const handleTryAgain = () => {
     setJudgeResponse(null);
-    setLastRecipe(null);
-    setLastPlayerName('');
-    setLastJudgeStyle('classic-rage');
-    setIsSaving(false);
     setActiveNotifications([]);
     setShowLevelUp(false);
     setResetKey(prev => prev + 1);
@@ -91,38 +83,7 @@ function PlayPage() {
     clearNotifications();
   };
 
-  const handleSaveToLeaderboard = async () => {
-    if (!judgeResponse || !lastRecipe || !lastPlayerName) {
-      return;
-    }
 
-    // Store the data before clearing the state
-    const recipeToSave = lastRecipe;
-    const responseToSave = judgeResponse;
-    const playerNameToSave = lastPlayerName;
-    const judgeStyleToSave = lastJudgeStyle;
-
-    // Clear the UI immediately to show leaderboard
-    setJudgeResponse(null);
-    setLastRecipe(null);
-    setLastPlayerName('');
-    setLastJudgeStyle('classic-rage');
-    setIsSaving(false);
-    setActiveNotifications([]);
-    setShowLevelUp(false);
-    setResetKey(prev => prev + 1);
-
-    // Save in background
-    try {
-      const success = await addEntry(recipeToSave, responseToSave, playerNameToSave, judgeStyleToSave);
-      if (!success) {
-        alert('Failed to save to leaderboard. Please try again.');
-      }
-    } catch (error) {
-      console.error('Failed to save to leaderboard:', error);
-      alert('Failed to save to leaderboard. Please try again.');
-    }
-  };
 
   const handleEntryClick = (entry: LeaderboardEntry) => {
     setSelectedEntry(entry);
@@ -199,15 +160,17 @@ function PlayPage() {
 
             {/* Level Up Celebration */}
             {showLevelUp && (
-              <AchievementAnimationWrapper isNew={true} rarity="legendary" className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="hell-kitchen-bg border-4 border-flame-500 rounded-lg p-6 shadow-2xl">
-                  <div className="text-center">
-                    <div className="text-6xl mb-2 animate-gordon-rage">🏆</div>
-                    <div className="text-3xl font-bold text-flame-300 animate-burning-text">LEVEL UP!</div>
-                    <div className="text-lg text-hell-300 font-bold">{getPlayerLevel()?.title}</div>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="animate-level-up-pop hell-kitchen-bg border-4 border-flame-500 rounded-2xl px-10 py-8 shadow-2xl text-center"
+                  style={{ boxShadow: '0 0 60px rgba(249,115,22,0.5), 0 0 120px rgba(220,38,38,0.3)' }}>
+                  <div className="text-7xl mb-3">🏆</div>
+                  <div className="text-4xl font-black text-flame-300 font-chef uppercase tracking-wider mb-1"
+                    style={{ textShadow: '0 0 20px rgba(249,115,22,0.8)' }}>
+                    Level Up!
                   </div>
+                  <div className="text-base text-hell-200 font-bold">{getPlayerLevel()?.title}</div>
                 </div>
-              </AchievementAnimationWrapper>
+              </div>
             )}
           </div>
         </ScoreAnimationWrapper>
@@ -224,9 +187,7 @@ function PlayPage() {
           <div className="mb-8 animate-verdict-reveal">
             <JudgeResponseComponent
               response={judgeResponse}
-              onSaveToLeaderboard={handleSaveToLeaderboard}
               onTryAgain={handleTryAgain}
-              isSaving={isSaving}
             />
           </div>
         )}
@@ -305,30 +266,10 @@ function PlayPage() {
                 className="animate-notif-slide-in"
                 style={{ animationDelay: `${index * 80}ms` }}
               >
-                <div className="relative">
-                  <AchievementBadge
-                    achievement={notification.achievement}
-                    size="lg"
-                    showDescription={true}
-                    isUnlocked={true}
-                    isNew={true}
-                  />
-                  {/* Dismiss button — inside the card boundary */}
-                  <button
-                    onClick={() => handleDismissNotification(index)}
-                    className="absolute top-2 right-2 bg-hell-600 text-hell-100 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold hover:bg-hell-500 transition-colors"
-                  >
-                    ×
-                  </button>
-                  {/* +XP badge — below the card, no negative overhang */}
-                  {notification.xpGained && (
-                    <div className="flex justify-center mt-1">
-                      <span className="bg-flame-600 text-white text-xs px-3 py-1 rounded-full font-bold shadow-lg">
-                        +{notification.xpGained} XP
-                      </span>
-                    </div>
-                  )}
-                </div>
+                <AchievementNotificationCard
+                  achievement={notification.achievement}
+                  onDismiss={() => handleDismissNotification(index)}
+                />
               </div>
             ))}
             {activeNotifications.length > 1 && (

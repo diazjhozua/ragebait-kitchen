@@ -6,9 +6,7 @@ import SimilarityWarning from './SimilarityWarning';
 
 interface JudgeResponseProps {
   response: JudgeResponse;
-  onSaveToLeaderboard?: () => void;
   onTryAgain?: () => void;
-  isSaving?: boolean;
   className?: string;
 }
 
@@ -27,9 +25,7 @@ function getScoreLabel(score: number) {
 
 export default function JudgeResponseComponent({
   response,
-  onSaveToLeaderboard,
   onTryAgain,
-  isSaving = false,
   className = ''
 }: JudgeResponseProps) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -161,18 +157,6 @@ export default function JudgeResponseComponent({
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 pt-1">
-          {onSaveToLeaderboard && (
-            <Button
-              onClick={onSaveToLeaderboard}
-              isLoading={isSaving}
-              loadingText="Saving..."
-              variant="hell"
-              withFlame={true}
-              className="flex-1 font-bold"
-            >
-              🏆 Save to Leaderboard
-            </Button>
-          )}
           {onTryAgain && (
             <Button
               variant="secondary"
