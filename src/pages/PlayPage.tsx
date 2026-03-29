@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useHasValidApiKey } from '../hooks/useApiKey';
 import { useLeaderboard } from '../hooks/useLeaderboard';
 import { useGameification } from '../hooks/useGameification';
@@ -36,7 +36,6 @@ function PlayPage() {
   const [resetKey, setResetKey] = useState(0);
   const [activeNotifications, setActiveNotifications] = useState<AchievementNotification[]>([]);
   const [showLevelUp, setShowLevelUp] = useState(false);
-  const notifDismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [xpTabActive, setXpTabActive] = useState(false);
 
   const handleJudgeComplete = async (response: JudgeResponse, recipe: Recipe, playerName: string, judgeStyle: JudgeStyle) => {
@@ -57,14 +56,7 @@ function PlayPage() {
         );
 
         if (notifications.length > 0) {
-          // Cap at 3 to prevent animation lag from stacking
           setActiveNotifications(notifications.slice(0, 3));
-
-          // Auto-dismiss after 4 s (clear any existing timer first)
-          if (notifDismissTimer.current) clearTimeout(notifDismissTimer.current);
-          notifDismissTimer.current = setTimeout(() => {
-            setActiveNotifications([]);
-          }, 4000);
 
           // Check for level up
           const hasLevelUp = notifications.some(n => n.levelUp);
@@ -308,7 +300,11 @@ function PlayPage() {
         {activeNotifications.length > 0 && (
           <div className="fixed top-[80px] right-4 z-[60] space-y-5 max-w-sm">
             {activeNotifications.map((notification, index) => (
-              <AchievementAnimationWrapper key={index} isNew={false} rarity={notification.achievement.category === 'special' ? 'legendary' : 'epic'}>
+              <div
+                key={index}
+                className="animate-notif-slide-in"
+                style={{ animationDelay: `${index * 80}ms` }}
+              >
                 <div className="relative">
                   <AchievementBadge
                     achievement={notification.achievement}
@@ -333,7 +329,7 @@ function PlayPage() {
                     </div>
                   )}
                 </div>
-              </AchievementAnimationWrapper>
+              </div>
             ))}
             {activeNotifications.length > 1 && (
               <button

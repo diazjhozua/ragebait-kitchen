@@ -1095,6 +1095,26 @@
   }
 }
 
+/* Notification slide-in from the right */
+@keyframes notifSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-notif-slide-in {
+  animation: notifSlideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 /* One-shot GPU-accelerated entrance for the Gordon verdict card */
 @keyframes verdictReveal {
   0% {
