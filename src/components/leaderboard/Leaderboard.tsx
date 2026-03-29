@@ -5,6 +5,7 @@ import LeaderboardEntryComponent from './LeaderboardEntry';
 import Pagination from './Pagination';
 import Button from '../common/Button';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { ConfigService } from '../../services/configStorage';
 
 interface LeaderboardProps {
   pageSize?: number;
@@ -44,6 +45,8 @@ export default function Leaderboard({
   const [removingId, setRemovingId] = useState<string | null>(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
+  const [clearPasscode, setClearPasscode] = useState('');
+  const [clearPasscodeError, setClearPasscodeError] = useState('');
 
   const handleSortChange = (newSortBy: 'rage_score' | 'date') => {
     const newSortOrder = sortBy === newSortBy && sortOrder === 'desc' ? 'asc' : 'desc';
@@ -62,10 +65,17 @@ export default function Leaderboard({
   };
 
   const handleClearLeaderboard = async () => {
+    const ok = await ConfigService.verifyPasscode(clearPasscode);
+    if (!ok) {
+      setClearPasscodeError('Incorrect passcode');
+      return;
+    }
     setIsClearing(true);
     const success = await clearLeaderboard();
     if (success) {
       setShowClearConfirm(false);
+      setClearPasscode('');
+      setClearPasscodeError('');
     }
     setIsClearing(false);
   };
@@ -170,7 +180,7 @@ export default function Leaderboard({
               📤 <span>Export</span>
             </button>
             <button
-              onClick={() => setShowClearConfirm(true)}
+              onClick={() => { setShowClearConfirm(true); setClearPasscode(''); setClearPasscodeError(''); }}
               title="Clear leaderboard"
               className="flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-bold bg-hell-800 text-hell-300 border border-hell-600 hover:bg-hell-700 hover:text-white transition-all ml-auto"
             >
@@ -283,6 +293,30 @@ export default function Leaderboard({
                     </div>
                   </div>
                 </div>
+                {/* Passcode gate */}
+                {ConfigService.hasPasscode() && (
+                  <div className="mt-4">
+                    <label className="block text-xs font-bold text-hell-300 mb-1 uppercase tracking-wider">
+                      🔒 Enter Passcode to Confirm
+                    </label>
+                    <input
+                      type="password"
+                      value={clearPasscode}
+                      onChange={e => { setClearPasscode(e.target.value); setClearPasscodeError(''); }}
+                      onKeyDown={e => e.key === 'Enter' && handleClearLeaderboard()}
+                      placeholder="••••••••"
+                      disabled={isClearing}
+                      className="w-full px-3 py-2 bg-kitchen-800 border-2 border-steel-600 rounded-lg text-hell-100 placeholder-steel-500 text-sm
+                        focus:ring-2 focus:ring-hell-500 focus:border-hell-500 transition-all"
+                    />
+                    {clearPasscodeError && (
+                      <p className="mt-1 text-xs text-hell-400 font-semibold flex items-center gap-1">
+                        <span>⚠️</span>{clearPasscodeError}
+                      </p>
+                    )}
+                  </div>
+                )}
+
                 <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse space-y-2 sm:space-y-0">
                   <Button
                     variant="hell"
