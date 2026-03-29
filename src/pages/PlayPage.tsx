@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useHasValidApiKey } from '../hooks/useApiKey';
 import { useLeaderboard } from '../hooks/useLeaderboard';
 import { useGameification } from '../hooks/useGameification';
@@ -35,6 +35,7 @@ function PlayPage() {
   const [resetKey, setResetKey] = useState(0);
   const [activeNotifications, setActiveNotifications] = useState<AchievementNotification[]>([]);
   const [showLevelUp, setShowLevelUp] = useState(false);
+  const notifDismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [xpTabActive, setXpTabActive] = useState(false);
 
   const handleJudgeComplete = async (response: JudgeResponse, recipe: Recipe, playerName: string, judgeStyle: JudgeStyle) => {
@@ -55,13 +56,20 @@ function PlayPage() {
         );
 
         if (notifications.length > 0) {
-          setActiveNotifications(notifications);
+          // Cap at 3 to prevent animation lag from stacking
+          setActiveNotifications(notifications.slice(0, 3));
+
+          // Auto-dismiss after 4 s (clear any existing timer first)
+          if (notifDismissTimer.current) clearTimeout(notifDismissTimer.current);
+          notifDismissTimer.current = setTimeout(() => {
+            setActiveNotifications([]);
+          }, 4000);
 
           // Check for level up
           const hasLevelUp = notifications.some(n => n.levelUp);
           if (hasLevelUp) {
             setShowLevelUp(true);
-            setTimeout(() => setShowLevelUp(false), 5000); // Hide after 5 seconds
+            setTimeout(() => setShowLevelUp(false), 5000);
           }
         }
       } catch (error) {
@@ -298,7 +306,7 @@ function PlayPage() {
         {activeNotifications.length > 0 && (
           <div className="fixed top-[80px] right-4 z-[60] space-y-5 max-w-sm">
             {activeNotifications.map((notification, index) => (
-              <AchievementAnimationWrapper key={index} isNew={true} rarity={notification.achievement.category === 'special' ? 'legendary' : 'epic'}>
+              <AchievementAnimationWrapper key={index} isNew={false} rarity={notification.achievement.category === 'special' ? 'legendary' : 'epic'}>
                 <div className="relative">
                   <AchievementBadge
                     achievement={notification.achievement}
@@ -317,7 +325,7 @@ function PlayPage() {
                   {/* +XP badge — below the card, no negative overhang */}
                   {notification.xpGained && (
                     <div className="flex justify-center mt-1">
-                      <span className="bg-flame-600 text-white text-xs px-3 py-1 rounded-full font-bold animate-bounce shadow-lg">
+                      <span className="bg-flame-600 text-white text-xs px-3 py-1 rounded-full font-bold shadow-lg">
                         +{notification.xpGained} XP
                       </span>
                     </div>
