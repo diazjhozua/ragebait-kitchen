@@ -11,6 +11,7 @@ interface LeaderboardProps {
   pageSize?: number;
   showControls?: boolean;
   onEntryClick?: (entry: LeaderboardEntry) => void;
+  onClear?: () => void;
   className?: string;
 }
 
@@ -18,6 +19,7 @@ export default function Leaderboard({
   pageSize = 10,
   showControls = true,
   onEntryClick,
+  onClear,
   className = ''
 }: LeaderboardProps) {
   const {
@@ -76,6 +78,7 @@ export default function Leaderboard({
       setShowClearConfirm(false);
       setClearPasscode('');
       setClearPasscodeError('');
+      onClear?.();
     }
     setIsClearing(false);
   };

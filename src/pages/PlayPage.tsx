@@ -22,7 +22,8 @@ function PlayPage() {
     clearNotifications,
     getPlayerLevel,
     loadChef,
-    getAllChefProfiles
+    getAllChefProfiles,
+    resetPlayerData
   } = useGameification();
 
   const [judgeResponse, setJudgeResponse] = useState<JudgeResponse | null>(null);
@@ -296,6 +297,7 @@ function PlayPage() {
                 <Leaderboard
                   showControls={true}
                   onEntryClick={handleEntryClick}
+                  onClear={resetPlayerData}
                 />
               )}
             </div>
