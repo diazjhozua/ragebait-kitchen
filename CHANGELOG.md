@@ -1,3 +1,25 @@
+# [1.5.0](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.4.0...v1.5.0) (2026-03-30)
+
+
+### Bug Fixes
+
+* **animation:** stop score wiggle after 2 seconds instead of looping forever ([be3c551](https://github.com/diazjhozua/ragebait-kitchen/commit/be3c55147224e1fd7ff73b688e613746677d234a))
+* **form:** clear recipe content and title after submission ([389de1f](https://github.com/diazjhozua/ragebait-kitchen/commit/389de1f100b324871ed167aa46dd87bab932df4c))
+
+
+### Features
+
+* **leaderboard:** clear XP profiles when leaderboard is cleared ([a71475b](https://github.com/diazjhozua/ragebait-kitchen/commit/a71475bf3c6c7bd9d29c23701a18b4fdc98ba650))
+* **leaderboard:** require passcode to clear leaderboard ([33ebe78](https://github.com/diazjhozua/ragebait-kitchen/commit/33ebe78ae0fbe39c5d9129f770feb26fc04a875d))
+* **notifications:** persist XP notifications until dismissed with smooth slide-in ([ece728d](https://github.com/diazjhozua/ragebait-kitchen/commit/ece728da4e7def163dfeed7cf68d9a9d4c9c3d8d))
+* **ux:** auto-save, smooth level-up, better XP notification cards ([3fabfdd](https://github.com/diazjhozua/ragebait-kitchen/commit/3fabfdd807c2b2673e6a7a84d2bd15f5ef0a036a)), closes [hi#contrast](https://github.com/hi/issues/contrast)
+
+
+### Performance Improvements
+
+* **notifications:** prevent lag from stacking XP notifications ([1acb804](https://github.com/diazjhozua/ragebait-kitchen/commit/1acb804ca2202d3cdc64a5c667b90ef7fda5e743))
+* **verdict:** replace laggy shake animation with smooth entrance ([b71e93d](https://github.com/diazjhozua/ragebait-kitchen/commit/b71e93dc8a570389be3d9715999274af8635ef86))
+
 # [1.4.0](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.3.0...v1.4.0) (2026-03-28)
 
 
