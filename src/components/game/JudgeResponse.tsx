@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { JudgeResponse } from '../../types/game';
 import RageScore from './RageScore';
+import GordonGif from './GordonGif';
 import Button from '../common/Button';
 import SimilarityWarning from './SimilarityWarning';
 
@@ -91,6 +92,11 @@ export default function JudgeResponseComponent({
         {/* Rage Score Visualization */}
         <div className="flex justify-center">
           <RageScore score={response.rage_score} size="md" />
+        </div>
+
+        {/* Gordon's GIF reaction */}
+        <div className="flex justify-center">
+          <GordonGif score={response.rage_score} scoreColor={scoreInfo.color} />
         </div>
 
         {/* Tags */}
