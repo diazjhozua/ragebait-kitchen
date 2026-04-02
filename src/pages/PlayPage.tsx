@@ -37,6 +37,7 @@ function PlayPage() {
 
   const handleJudgeComplete = async (response: JudgeResponse, recipe: Recipe, playerName: string, judgeStyle: JudgeStyle) => {
     setJudgeResponse(response);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     // Auto-save to leaderboard and trigger sidebar refresh
     await addEntry(recipe, response, playerName.trim(), judgeStyle);
