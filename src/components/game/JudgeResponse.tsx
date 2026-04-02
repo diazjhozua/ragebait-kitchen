@@ -105,7 +105,7 @@ export default function JudgeResponseComponent({
         />
         {/* score ring — centered, bottom half in the pb-16 gap, top half over the GIF */}
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2">
-          <RageScore score={response.rage_score} size="md" />
+          <RageScore score={response.rage_score} size="md" showLabel={false} />
         </div>
       </div>
 

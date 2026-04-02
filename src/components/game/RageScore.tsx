@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { getRageScoreLevel } from '../../utils/constants';
 
 interface RageScoreProps {
@@ -17,109 +18,128 @@ export default function RageScore({
 }: RageScoreProps) {
   const level = getRageScoreLevel(score);
 
+  // Count-up animation for the score number
+  const [displayScore, setDisplayScore] = useState(animated ? 0 : score);
+  useEffect(() => {
+    if (!animated) { setDisplayScore(score); return; }
+    const duration = 1100;
+    const steps = 55;
+    const increment = score / steps;
+    let current = 0;
+    const timer = setInterval(() => {
+      current = Math.min(current + increment, score);
+      setDisplayScore(Math.round(current));
+      if (current >= score) clearInterval(timer);
+    }, duration / steps);
+    return () => clearInterval(timer);
+  }, [score, animated]);
+
   const sizeClasses = {
-    sm: {
-      container: 'w-20 h-20',
-      text: 'text-xl',
-      label: 'text-sm',
-      stroke: '6'
-    },
-    md: {
-      container: 'w-32 h-32',
-      text: 'text-3xl',
-      label: 'text-base',
-      stroke: '8'
-    },
-    lg: {
-      container: 'w-48 h-48',
-      text: 'text-5xl',
-      label: 'text-lg',
-      stroke: '10'
-    }
+    sm: { container: 'w-20 h-20', text: 'text-xl',  subtext: 'text-[10px]', label: 'text-sm',  stroke: '6',  emoji: 'text-lg',  radius: 40 },
+    md: { container: 'w-32 h-32', text: 'text-3xl', subtext: 'text-xs',     label: 'text-base', stroke: '8',  emoji: 'text-2xl', radius: 42 },
+    lg: { container: 'w-48 h-48', text: 'text-5xl', subtext: 'text-sm',     label: 'text-lg',  stroke: '10', emoji: 'text-4xl', radius: 44 },
   };
 
-  const sizeConfig = sizeClasses[size];
-
-  // Calculate the circumference and dash offset for the progress ring
-  const radius = 45;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDasharray = circumference;
+  const cfg = sizeClasses[size];
+  const circumference = 2 * Math.PI * cfg.radius;
   const strokeDashoffset = circumference - (score / 100) * circumference;
+
+  const ringColor =
+    score >= 80 ? '#dc2626' :
+    score >= 60 ? '#f97316' :
+    score >= 40 ? '#eab308' :
+    score >= 20 ? '#22c55e' :
+                  '#6366f1';
+
+  const filterId = `rage-glow-${size}`;
 
   return (
     <div className={`flex flex-col items-center ${className}`}>
-      <div className={`relative ${sizeConfig.container}`}>
-        {/* Background circle */}
-        <svg className="transform -rotate-90 w-full h-full">
+      <div className={`relative ${cfg.container}`}>
+        <svg className="transform -rotate-90 w-full h-full" viewBox="0 0 100 100">
+          <defs>
+            <filter id={filterId} x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2.5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          {/* Dark backdrop so ring is readable on any background */}
           <circle
-            cx="50%"
-            cy="50%"
-            r={radius}
-            stroke="currentColor"
-            strokeWidth={sizeConfig.stroke}
-            fill="transparent"
-            className="text-kitchen-600 opacity-30"
+            cx="50" cy="50" r={cfg.radius + 5}
+            fill="rgba(5,0,0,0.72)"
           />
-          {/* Progress circle */}
+
+          {/* Track ring */}
           <circle
-            cx="50%"
-            cy="50%"
-            r={radius}
-            stroke="currentColor"
-            strokeWidth={sizeConfig.stroke}
+            cx="50" cy="50" r={cfg.radius}
+            stroke="rgba(255,255,255,0.08)"
+            strokeWidth={cfg.stroke}
             fill="transparent"
-            strokeDasharray={strokeDasharray}
+          />
+
+          {/* Progress arc */}
+          <circle
+            cx="50" cy="50" r={cfg.radius}
+            stroke={ringColor}
+            strokeWidth={cfg.stroke}
+            fill="transparent"
+            strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
-            className={`transition-all duration-1000 ease-out ${
-              score >= 80 ? 'text-hell-600 drop-shadow-hell-glow' :
-              score >= 60 ? 'text-flame-600 drop-shadow-flame-glow' :
-              score >= 40 ? 'text-flame-500' :
-              score >= 20 ? 'text-kitchen-400' :
-              'text-green-500'
-            } ${animated ? 'animate-flame-flicker' : ''}`}
+            filter={`url(#${filterId})`}
+            style={{ transition: 'stroke-dashoffset 1.1s cubic-bezier(0.4,0,0.2,1)', transitionDelay: '80ms' }}
           />
         </svg>
 
-        {/* Score text in the center */}
+        {/* Score number */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <div className={`font-extrabold ${sizeConfig.text} ${
-              score >= 90 ? 'text-hell-100 animate-hell-pulse hell-glow' :
-              score >= 80 ? 'text-hell-200' :
-              score >= 60 ? 'text-flame-200' :
-              score >= 40 ? 'text-flame-300' :
-              'text-kitchen-200'
-            } drop-shadow-lg`}>
-              {score}
+          <div className="text-center leading-none">
+            <div
+              className={`font-black ${cfg.text} tabular-nums`}
+              style={{ color: ringColor, textShadow: `0 0 16px ${ringColor}cc, 0 2px 4px rgba(0,0,0,0.9)` }}
+            >
+              {displayScore}
             </div>
-            <div className={`${sizeConfig.label} text-steel-300 font-bold font-chef tracking-wider`}>
-              RAGE
+            <div
+              className={`${cfg.subtext} font-black uppercase tracking-widest mt-0.5`}
+              style={{ color: 'rgba(255,255,255,0.5)' }}
+            >
+              / 100
             </div>
           </div>
         </div>
 
-        {/* Emoji indicator */}
+        {/* Emoji badge */}
         <div className="absolute -top-2 -right-2">
-          <span className={`${size === 'sm' ? 'text-lg' : size === 'md' ? 'text-2xl' : 'text-4xl'} ${animated ? 'animate-bounce' : ''}`}>
+          <span className={`${cfg.emoji} ${animated ? 'animate-bounce' : ''}`}>
             {level.emoji}
           </span>
         </div>
       </div>
 
       {showLabel && (
-        <div className="mt-4 text-center">
-          <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${level.color}`}>
+        <div className="mt-3 text-center">
+          <div
+            className="inline-flex items-center px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest"
+            style={{
+              background: `${ringColor}22`,
+              border: `1px solid ${ringColor}55`,
+              color: ringColor,
+              textShadow: `0 0 8px ${ringColor}88`,
+            }}
+          >
             {level.label}
-          </div>
-          <div className="mt-1 text-xs text-gray-500">
-            Score: {score}/100
           </div>
         </div>
       )}
     </div>
   );
 }
+
 
 // Component variant for displaying just the badge
 export function RageScoreBadge({ score, className = '' }: { score: number; className?: string }) {
