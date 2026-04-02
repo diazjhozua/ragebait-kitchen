@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.5.0...v1.5.1) (2026-04-02)
+
+
+### Bug Fixes
+
+* **leaderboard:** refresh data automatically after entry submission ([9e8cb09](https://github.com/diazjhozua/ragebait-kitchen/commit/9e8cb09965a62e6a370e33c7f7b2808f8cc0062d))
+
 # [1.5.0](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.4.0...v1.5.0) (2026-03-30)
 
 
