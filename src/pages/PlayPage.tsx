@@ -30,6 +30,7 @@ function PlayPage() {
   const [selectedEntry, setSelectedEntry] = useState<LeaderboardEntry | null>(null);
   const [showFullLeaderboard, setShowFullLeaderboard] = useState(false);
   const [resetKey, setResetKey] = useState(0);
+  const [leaderboardRefreshKey, setLeaderboardRefreshKey] = useState(0);
   const [activeNotifications, setActiveNotifications] = useState<AchievementNotification[]>([]);
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [xpTabActive, setXpTabActive] = useState(false);
@@ -37,8 +38,9 @@ function PlayPage() {
   const handleJudgeComplete = async (response: JudgeResponse, recipe: Recipe, playerName: string, judgeStyle: JudgeStyle) => {
     setJudgeResponse(response);
 
-    // Auto-save to leaderboard (fire and forget)
-    addEntry(recipe, response, playerName.trim(), judgeStyle);
+    // Auto-save to leaderboard and trigger sidebar refresh
+    await addEntry(recipe, response, playerName.trim(), judgeStyle);
+    setLeaderboardRefreshKey(prev => prev + 1);
 
     // Process gamification for this recipe submission
     if (playerName.trim()) {
@@ -251,6 +253,7 @@ function PlayPage() {
                   showControls={true}
                   onEntryClick={handleEntryClick}
                   onClear={resetPlayerData}
+                  refreshTrigger={leaderboardRefreshKey}
                 />
               )}
             </div>

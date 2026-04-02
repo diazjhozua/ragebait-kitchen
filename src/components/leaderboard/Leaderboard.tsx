@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLeaderboard } from '../../hooks/useLeaderboard';
 import type { LeaderboardEntry } from '../../types/leaderboard';
 import LeaderboardEntryComponent from './LeaderboardEntry';
@@ -13,6 +13,7 @@ interface LeaderboardProps {
   onEntryClick?: (entry: LeaderboardEntry) => void;
   onClear?: () => void;
   className?: string;
+  refreshTrigger?: number;
 }
 
 export default function Leaderboard({
@@ -20,7 +21,8 @@ export default function Leaderboard({
   showControls = true,
   onEntryClick,
   onClear,
-  className = ''
+  className = '',
+  refreshTrigger
 }: LeaderboardProps) {
   const {
     entries,
@@ -41,6 +43,14 @@ export default function Leaderboard({
     refresh,
     exportData
   } = useLeaderboard({ pageSize });
+
+  // Refresh when parent signals a new entry was added
+  useEffect(() => {
+    if (refreshTrigger !== undefined && refreshTrigger > 0) {
+      refresh();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshTrigger]);
 
   const [sortBy, setSortBy] = useState<'rage_score' | 'date'>('rage_score');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
