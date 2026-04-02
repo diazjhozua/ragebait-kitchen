@@ -94,9 +94,13 @@ export default function JudgeResponseComponent({
           <RageScore score={response.rage_score} size="md" />
         </div>
 
-        {/* Gordon's GIF reaction */}
+        {/* Gordon's GIF reaction — key forces remount on each new submission */}
         <div className="flex justify-center">
-          <GordonGif score={response.rage_score} scoreColor={scoreInfo.color} />
+          <GordonGif
+            key={`${response.rage_score}-${response.reaction.slice(0, 20)}`}
+            score={response.rage_score}
+            scoreColor={scoreInfo.color}
+          />
         </div>
 
         {/* Tags */}
