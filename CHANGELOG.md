@@ -1,3 +1,12 @@
+# [1.6.0](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.5.1...v1.6.0) (2026-04-02)
+
+
+### Features
+
+* add Gordon Ramsay GIF ID map with rage tier buckets ([b598e51](https://github.com/diazjhozua/ragebait-kitchen/commit/b598e511c7e728c76845c68d9777f9f2adea7118))
+* add GordonGif component with loading skeleton and GIPHY attribution ([ef27b79](https://github.com/diazjhozua/ragebait-kitchen/commit/ef27b79a72b4b8fa078d0f666e10eeb692cd08e5))
+* show Gordon Ramsay GIF in verdict card between score ring and tags ([91bcccb](https://github.com/diazjhozua/ragebait-kitchen/commit/91bcccb45060df3febc319c4c2ac714a27200cc6))
+
 ## [1.5.1](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.5.0...v1.5.1) (2026-04-02)
 
 
