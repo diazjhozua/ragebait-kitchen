@@ -1,3 +1,19 @@
+# [1.7.0](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.6.0...v1.7.0) (2026-04-02)
+
+
+### Bug Fixes
+
+* cap GIF at 220px max-height with contain so full image shows ([397d520](https://github.com/diazjhozua/ragebait-kitchen/commit/397d5208fd165da03696ebf0d7fb9964d06b773b))
+* increase GIF max-height to 340px ([35f315b](https://github.com/diazjhozua/ragebait-kitchen/commit/35f315b96560a137ad03a0388573b55aa1e263eb))
+* remount GordonGif on each new submission so GIF updates correctly ([635233c](https://github.com/diazjhozua/ragebait-kitchen/commit/635233ca63157b9e17d69278a4b00538ab25979b))
+
+
+### Features
+
+* GIF hero layout with score ring floating over bottom edge ([d0b26cb](https://github.com/diazjhozua/ragebait-kitchen/commit/d0b26cb5b7e883e26e694e30f052dfc8c42574e4))
+* improve score ring with count-up animation, dark backdrop and glow filter ([fe6152d](https://github.com/diazjhozua/ragebait-kitchen/commit/fe6152d97f9011875435d5bda2f52ed72589a632))
+* smooth scroll to top on submission result ([87180ee](https://github.com/diazjhozua/ragebait-kitchen/commit/87180eeed517527f36757c9a71c1e5511ec81291))
+
 # [1.6.0](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.5.1...v1.6.0) (2026-04-02)
 
 
