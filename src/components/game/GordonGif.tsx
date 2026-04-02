@@ -26,7 +26,7 @@ export default function GordonGif({ score, scoreColor }: GordonGifProps) {
         <div
           className="animate-pulse w-full"
           style={{
-            height: '200px',
+            height: '340px',
             background: 'linear-gradient(135deg, rgba(30,0,0,0.8) 0%, rgba(60,10,10,0.6) 100%)',
           }}
         />
@@ -37,7 +37,7 @@ export default function GordonGif({ score, scoreColor }: GordonGifProps) {
         src={getGifUrl(gifId)}
         alt="Gordon Ramsay reacting"
         className={loaded ? 'block w-full' : 'hidden'}
-        style={{ maxHeight: '220px', objectFit: 'contain', background: 'rgba(10,0,0,0.8)' }}
+        style={{ maxHeight: '340px', objectFit: 'contain', background: 'rgba(10,0,0,0.8)' }}
         onLoad={() => setLoaded(true)}
         onError={() => setErrored(true)}
       />
