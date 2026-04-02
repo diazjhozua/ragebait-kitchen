@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.7.0...v1.8.0) (2026-04-02)
+
+
+### Features
+
+* add flame favicon ([b963b63](https://github.com/diazjhozua/ragebait-kitchen/commit/b963b63e65c36dfead939a236e95ca66c3a11b20))
+
 # [1.7.0](https://github.com/diazjhozua/ragebait-kitchen/compare/v1.6.0...v1.7.0) (2026-04-02)
 
 
