@@ -88,21 +88,28 @@ export default function JudgeResponseComponent({
         </div>
       </div>
 
-      <div className="p-6 space-y-5">
-        {/* Rage Score Visualization */}
-        <div className="flex justify-center">
+      {/* GIF hero with score ring floating over the bottom edge */}
+      <div className="relative pb-16">
+        <GordonGif
+          key={`${response.rage_score}-${response.reaction.slice(0, 20)}`}
+          score={response.rage_score}
+          scoreColor={scoreInfo.color}
+        />
+        {/* gradient so the score ring reads clearly against any GIF */}
+        <div
+          className="absolute inset-x-0 bottom-0 pointer-events-none rounded-b-xl"
+          style={{
+            height: '60%',
+            background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.75))',
+          }}
+        />
+        {/* score ring — centered, bottom half in the pb-16 gap, top half over the GIF */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2">
           <RageScore score={response.rage_score} size="md" />
         </div>
+      </div>
 
-        {/* Gordon's GIF reaction — key forces remount on each new submission */}
-        <div className="flex justify-center">
-          <GordonGif
-            key={`${response.rage_score}-${response.reaction.slice(0, 20)}`}
-            score={response.rage_score}
-            scoreColor={scoreInfo.color}
-          />
-        </div>
-
+      <div className="px-6 pt-10 pb-6 space-y-5">
         {/* Tags */}
         <div>
           <h4 className="text-xs font-black uppercase tracking-widest text-flame-400 mb-2">Reaction Tags</h4>
